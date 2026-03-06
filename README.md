@@ -180,3 +180,12 @@ VITE_API_URL=http://localhost:8080
 - 實作歡迎頁面（無 redirect 時的 fallback）
 - 路由守衛（未認證 → 導向 /login）
 - 風格對齊 FAS 前端：Emerald 主色、CSS 變數主題、卡片式佈局
+
+### v2.0 — 註冊 + MGR 管理功能 + 主題切換
+- 新增明亮 / 深色模式切換（ThemeToggle + Pinia theme store + localStorage）
+- 新增使用者註冊頁面（對接 `POST /api/mgr/user/add`）
+- 新增 MGR 管理儀表板（取代 WelcomeView 作為首頁）
+- 新增個人資料頁面（帳號資訊 + Token + RBAC 角色）
+- 新增頂部導航列（NavBar，登入後條件渲染）
+- 登入頁 Footer 新增「Create Account」註冊連結
+- 詳見 [v2.md](./v2.md)

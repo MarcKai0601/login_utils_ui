@@ -53,7 +53,7 @@ async function handleLogin() {
       const separator = redirectUrl.value.includes('?') ? '&' : '?'
       window.location.href = `${redirectUrl.value}${separator}token=${data.token}`
     } else {
-      router.push({ name: 'Welcome' })
+      router.push({ name: 'Dashboard' })
     }
   } catch (err: any) {
     if (err.response?.data?.message) {
@@ -179,7 +179,17 @@ async function handleLogin() {
         </form>
 
         <!-- Footer -->
-        <div class="mt-8 pt-5 text-center" style="border-top: 1px solid var(--card-border)">
+        <div class="mt-8 pt-5 text-center space-y-2" style="border-top: 1px solid var(--card-border)">
+          <p class="text-xs" style="color: var(--sidebar-text)">
+            Don't have an account?
+            <router-link
+              :to="{ name: 'Register' }"
+              class="font-medium transition-colors hover:underline"
+              style="color: var(--body-text)"
+            >
+              Create Account
+            </router-link>
+          </p>
           <p class="text-xs" style="color: var(--sidebar-text)">
             Secured by <span style="color: var(--body-text)" class="font-medium">Login Utils</span> · Identity Provider
           </p>

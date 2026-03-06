@@ -42,6 +42,17 @@ export interface LoginResponseData {
     userId: number
 }
 
+export interface RegisterRequestData {
+    username: string
+    password: string
+    status?: number
+    roleId?: number
+    nickname?: string
+    email?: string
+    phone?: string
+    memo?: string
+}
+
 export interface MgrResponse<T = unknown> {
     code: string
     message: string
@@ -54,6 +65,14 @@ export const authApi = {
         return apiClient.post<MgrResponse<LoginResponseData>>('/api/login', {
             username,
             password,
+        })
+    },
+
+    register(data: RegisterRequestData) {
+        return apiClient.post<MgrResponse<string>>('/api/mgr/user/add', {
+            ...data,
+            status: data.status ?? 1,
+            roleId: data.roleId ?? 1,
         })
     },
 }
