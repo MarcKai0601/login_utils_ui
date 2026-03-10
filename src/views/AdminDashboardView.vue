@@ -52,7 +52,8 @@ const authStore = useAuthStore()
           <p class="text-xs font-medium uppercase tracking-wider" style="color: var(--sidebar-text)">RBAC</p>
           <ShieldCheck class="w-4 h-4" style="color: var(--sidebar-text)" :stroke-width="1.75" />
         </div>
-        <p class="text-lg font-bold" style="color: var(--body-text)">{{ authStore.roles.length }}</p>
+        <!-- ✅ 這裡修改了：改為判斷 role 是否存在，存在則顯示 1，否則顯示 0 -->
+        <p class="text-lg font-bold" style="color: var(--body-text)">{{ authStore.role ? 1 : 0 }}</p>
         <p class="text-xs mt-1" style="color: var(--sidebar-text)">Assigned roles</p>
       </div>
 

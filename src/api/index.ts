@@ -40,6 +40,7 @@ apiClient.interceptors.response.use(
 export interface LoginResponseData {
     token: string
     userId: number
+    role: string
 }
 
 export interface RegisterRequestData {

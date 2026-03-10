@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '../store/auth'
 import { LayoutDashboard, UserCircle, LogOut, ShieldCheck } from 'lucide-vue-next'
@@ -12,10 +13,18 @@ function handleLogout() {
   router.push({ name: 'Login' })
 }
 
-const navItems = [
-  { name: 'Dashboard', routeName: 'Dashboard', icon: LayoutDashboard },
-  { name: 'Profile', routeName: 'Profile', icon: UserCircle },
-]
+// Only show Dashboard to SUPER_ADMIN
+const navItems = computed(() => {
+  const items = [
+    { name: 'Profile', routeName: 'Profile', icon: UserCircle },
+  ]
+  if (authStore.isSuperAdmin) {
+    items.unshift({ name: 'Dashboard', routeName: 'Dashboard', icon: LayoutDashboard })
+  }
+  return items
+})
+
+const logoTarget = computed(() => authStore.isSuperAdmin ? 'Dashboard' : 'Profile')
 </script>
 
 <template>
@@ -26,7 +35,7 @@ const navItems = [
     <!-- Left: Logo + Nav -->
     <div class="flex items-center gap-6">
       <!-- Logo -->
-      <router-link :to="{ name: 'Dashboard' }" class="flex items-center gap-2.5">
+      <router-link :to="{ name: logoTarget }" class="flex items-center gap-2.5">
         <div class="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center shrink-0">
           <ShieldCheck class="w-4.5 h-4.5 text-white" :stroke-width="2" />
         </div>

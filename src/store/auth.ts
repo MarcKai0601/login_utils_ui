@@ -11,36 +11,35 @@ export const useAuthStore = defineStore('auth', () => {
     // --------------- State ---------------
     const token = ref<string>(localStorage.getItem('token') || '')
     const userId = ref<string>(localStorage.getItem('userId') || '')
-    const roles = ref<RoleInfo[]>(JSON.parse(localStorage.getItem('roles') || '[]'))
-
+    const role = ref<string>(localStorage.getItem('role') || '')
     // --------------- Getters ---------------
     const isAuthenticated = computed(() => !!token.value)
 
     // --------------- Actions ---------------
-    function login(newToken: string, newUserId: string | number, newRoles: RoleInfo[] = []) {
+    function login(newToken: string, newUserId: string | number, newRole: string = 'USER') {
         token.value = newToken
         userId.value = String(newUserId)
-        roles.value = newRoles
+        role.value = newRole
 
         localStorage.setItem('token', newToken)
         localStorage.setItem('userId', String(newUserId))
-        localStorage.setItem('roles', JSON.stringify(newRoles))
+        localStorage.setItem('role', newRole)
     }
 
     function logout() {
         token.value = ''
         userId.value = ''
-        roles.value = []
+        role.value = ''
 
         localStorage.removeItem('token')
         localStorage.removeItem('userId')
-        localStorage.removeItem('roles')
+        localStorage.removeItem('role')
     }
 
     return {
         token,
         userId,
-        roles,
+        role,
         isAuthenticated,
         login,
         logout,

@@ -40,20 +40,23 @@ async function handleLogin() {
     const response = await authApi.login(username.value, password.value)
     const { code, message, data } = response.data
 
-    if (code !== '200' && code !== '0') {
+    if (String(code) !== '200' && String(code) !== '0' && String(code) !== '0000') {
       errorMessage.value = message || 'Login failed. Please try again.'
       return
     }
 
+    const primaryRole = (data.roles && data.roles.length > 0) ? data.roles[0] : 'USER';
     // Store credentials in Pinia + localStorage
-    authStore.login(data.token, data.userId)
+authStore.login(data.token, data.userId, primaryRole);
 
     // SSO redirect logic
     if (redirectUrl.value) {
       const separator = redirectUrl.value.includes('?') ? '&' : '?'
       window.location.href = `${redirectUrl.value}${separator}token=${data.token}`
     } else {
-      router.push({ name: 'Dashboard' })
+      // SUPER_ADMIN → Dashboard, others → Profile
+      const target = primaryRole === 'SUPER_ADMIN' ? 'Dashboard' : 'Profile'
+      router.push({ name: target })
     }
   } catch (err: any) {
     if (err.response?.data?.message) {

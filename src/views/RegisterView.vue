@@ -52,10 +52,11 @@ async function handleRegister() {
 
     const { code, message } = response.data
 
-    if (code !== '200' && code !== '0') {
+    if (String(code) !== '200' && String(code) !== '0' && String(code) !== '0000') {
       errorMessage.value = message || 'Registration failed. Please try again.'
       return
     }
+
 
     successMessage.value = 'Account created successfully! Redirecting to login...'
     setTimeout(() => {
