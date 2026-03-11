@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { useAuthStore } from '../store/auth'
+import type { RoleInfo } from '../store/auth'
 import router from '../router'
 
 // ─── Axios Instance ────────────────────────────────────────────
@@ -41,6 +42,7 @@ export interface LoginResponseData {
     token: string
     userId: number
     role: string
+    roles: RoleInfo[]
 }
 
 export interface RegisterRequestData {

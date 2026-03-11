@@ -45,18 +45,17 @@ async function handleLogin() {
       return
     }
 
-    const primaryRole = (data.roles && data.roles.length > 0) ? data.roles[0] : 'USER';
     // Store credentials in Pinia + localStorage
-authStore.login(data.token, data.userId, primaryRole);
+    const primaryRole = data.role || 'USER'
+    authStore.login(data.token, data.userId, primaryRole, data.roles || [])
 
     // SSO redirect logic
     if (redirectUrl.value) {
       const separator = redirectUrl.value.includes('?') ? '&' : '?'
       window.location.href = `${redirectUrl.value}${separator}token=${data.token}`
     } else {
-      // SUPER_ADMIN → Dashboard, others → Profile
-      const target = primaryRole === 'SUPER_ADMIN' ? 'Dashboard' : 'Profile'
-      router.push({ name: target })
+      // No external redirect → go to App Launcher
+      router.push({ name: 'Welcome' })
     }
   } catch (err: any) {
     if (err.response?.data?.message) {

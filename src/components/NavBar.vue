@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '../store/auth'
-import { LayoutDashboard, UserCircle, LogOut, ShieldCheck } from 'lucide-vue-next'
+import { LayoutDashboard, UserCircle, LogOut, ShieldCheck, Grid3x3 } from 'lucide-vue-next'
 
 const router = useRouter()
 const route = useRoute()
@@ -13,18 +13,17 @@ function handleLogout() {
   router.push({ name: 'Login' })
 }
 
-// Only show Dashboard to SUPER_ADMIN
+// Build nav items dynamically based on role
 const navItems = computed(() => {
   const items = [
+    { name: 'Apps', routeName: 'Welcome', icon: Grid3x3 },
     { name: 'Profile', routeName: 'Profile', icon: UserCircle },
   ]
   if (authStore.isSuperAdmin) {
-    items.unshift({ name: 'Dashboard', routeName: 'Dashboard', icon: LayoutDashboard })
+    items.push({ name: 'Dashboard', routeName: 'Dashboard', icon: LayoutDashboard })
   }
   return items
 })
-
-const logoTarget = computed(() => authStore.isSuperAdmin ? 'Dashboard' : 'Profile')
 </script>
 
 <template>
@@ -35,7 +34,7 @@ const logoTarget = computed(() => authStore.isSuperAdmin ? 'Dashboard' : 'Profil
     <!-- Left: Logo + Nav -->
     <div class="flex items-center gap-6">
       <!-- Logo -->
-      <router-link :to="{ name: logoTarget }" class="flex items-center gap-2.5">
+      <router-link :to="{ name: 'Welcome' }" class="flex items-center gap-2.5">
         <div class="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center shrink-0">
           <ShieldCheck class="w-4.5 h-4.5 text-white" :stroke-width="2" />
         </div>
