@@ -1,15 +1,18 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { UserPlus, User, Lock, Eye, EyeOff, Mail, Phone, SmilePlus, ArrowLeft } from 'lucide-vue-next'
+import { useI18n } from 'vue-i18n'
+import { UserPlus, User, Lock, Eye, EyeOff, Mail, Phone, SmilePlus, ArrowLeft, Globe } from 'lucide-vue-next'
 import { authApi } from '../api'
 
 const router = useRouter()
+const { t, locale } = useI18n()
 
 // ─── Form State ───────────────────────────────────────────────
 const username = ref('')
 const password = ref('')
 const confirmPassword = ref('')
+const languagePref = ref(locale.value as string)
 const nickname = ref('')
 const email = ref('')
 const phone = ref('')
@@ -25,17 +28,17 @@ async function handleRegister() {
   successMessage.value = ''
 
   if (!username.value.trim() || !password.value.trim()) {
-    errorMessage.value = 'Username and password are required.'
+    errorMessage.value = t('register.errorReq')
     return
   }
 
   if (password.value.length < 6) {
-    errorMessage.value = 'Password must be at least 6 characters.'
+    errorMessage.value = t('register.errorLen')
     return
   }
 
   if (password.value !== confirmPassword.value) {
-    errorMessage.value = 'Passwords do not match.'
+    errorMessage.value = t('register.errorMatch')
     return
   }
 
@@ -45,6 +48,7 @@ async function handleRegister() {
     const response = await authApi.register({
       username: username.value,
       password: password.value,
+      language: languagePref.value,
       nickname: nickname.value || undefined,
       email: email.value || undefined,
       phone: phone.value || undefined,
@@ -58,7 +62,7 @@ async function handleRegister() {
     }
 
 
-    successMessage.value = 'Account created successfully! Redirecting to login...'
+    successMessage.value = t('register.success')
     setTimeout(() => {
       router.push({ name: 'Login' })
     }, 1500)
@@ -68,7 +72,7 @@ async function handleRegister() {
     } else if (err.message) {
       errorMessage.value = err.message
     } else {
-      errorMessage.value = 'An unexpected error occurred. Please try again.'
+      errorMessage.value = t('login.errorGen')
     }
   } finally {
     isLoading.value = false
@@ -91,8 +95,8 @@ async function handleRegister() {
           <div class="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-violet-500 shrink-0 mb-4">
             <UserPlus class="w-6 h-6 text-white" :stroke-width="1.75" />
           </div>
-          <h1 class="text-xl font-bold leading-tight" style="color: var(--body-text)">Create Account</h1>
-          <p class="text-xs mt-1" style="color: var(--sidebar-text)">Register a new identity on Login Utils</p>
+          <h1 class="text-xl font-bold leading-tight" style="color: var(--body-text)">{{ $t('register.title') }}</h1>
+          <p class="text-xs mt-1" style="color: var(--sidebar-text)">{{ $t('register.subtitle') }}</p>
         </div>
 
         <!-- Success Message -->
@@ -138,7 +142,7 @@ async function handleRegister() {
 
           <!-- Username -->
           <div class="space-y-1.5">
-            <label for="reg-username" class="block text-xs font-medium" style="color: var(--sidebar-text)">Username *</label>
+            <label for="reg-username" class="block text-xs font-medium" style="color: var(--sidebar-text)">{{ $t('register.usernameReq') }}</label>
             <div class="relative">
               <User class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none" style="color: var(--sidebar-text)" :stroke-width="1.75" />
               <input
@@ -146,7 +150,7 @@ async function handleRegister() {
                 v-model="username"
                 type="text"
                 autocomplete="username"
-                placeholder="Choose a username"
+                :placeholder="$t('register.usernamePlh')"
                 class="w-full pl-10 pr-4 py-2.5 rounded-lg text-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-violet-500/50"
                 style="background-color: var(--input-bg); border: 1px solid var(--input-border); color: var(--body-text)"
               />
@@ -155,7 +159,7 @@ async function handleRegister() {
 
           <!-- Password -->
           <div class="space-y-1.5">
-            <label for="reg-password" class="block text-xs font-medium" style="color: var(--sidebar-text)">Password *</label>
+            <label for="reg-password" class="block text-xs font-medium" style="color: var(--sidebar-text)">{{ $t('register.passwordReq') }}</label>
             <div class="relative">
               <Lock class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none" style="color: var(--sidebar-text)" :stroke-width="1.75" />
               <input
@@ -163,7 +167,7 @@ async function handleRegister() {
                 v-model="password"
                 :type="showPassword ? 'text' : 'password'"
                 autocomplete="new-password"
-                placeholder="Min. 6 characters"
+                :placeholder="$t('register.passwordPlh')"
                 class="w-full pl-10 pr-10 py-2.5 rounded-lg text-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-violet-500/50"
                 style="background-color: var(--input-bg); border: 1px solid var(--input-border); color: var(--body-text)"
               />
@@ -182,7 +186,7 @@ async function handleRegister() {
 
           <!-- Confirm Password -->
           <div class="space-y-1.5">
-            <label for="reg-confirm" class="block text-xs font-medium" style="color: var(--sidebar-text)">Confirm Password *</label>
+            <label for="reg-confirm" class="block text-xs font-medium" style="color: var(--sidebar-text)">{{ $t('register.confirmReq') }}</label>
             <div class="relative">
               <Lock class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none" style="color: var(--sidebar-text)" :stroke-width="1.75" />
               <input
@@ -190,7 +194,7 @@ async function handleRegister() {
                 v-model="confirmPassword"
                 :type="showConfirmPassword ? 'text' : 'password'"
                 autocomplete="new-password"
-                placeholder="Re-enter your password"
+                :placeholder="$t('register.confirmPlh')"
                 class="w-full pl-10 pr-10 py-2.5 rounded-lg text-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-violet-500/50"
                 style="background-color: var(--input-bg); border: 1px solid var(--input-border); color: var(--body-text)"
               />
@@ -207,21 +211,40 @@ async function handleRegister() {
             </div>
           </div>
 
+          <!-- Language Preference -->
+          <div class="space-y-1.5">
+            <label for="reg-lang" class="block text-xs font-medium" style="color: var(--sidebar-text)">{{ $t('register.language') }}</label>
+            <div class="relative">
+              <Globe class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none" style="color: var(--sidebar-text)" :stroke-width="1.75" />
+              <select
+                id="reg-lang"
+                v-model="languagePref"
+                class="w-full pl-10 pr-4 py-2.5 rounded-lg text-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-violet-500/50 appearance-none cursor-pointer"
+                style="background-color: var(--input-bg); border: 1px solid var(--input-border); color: var(--body-text)"
+              >
+                <option value="zh-TW">繁體中文 (zh-TW)</option>
+                <option value="en">English (en)</option>
+                <option value="ja">日本語 (ja)</option>
+                <option value="ko">한국어 (ko)</option>
+              </select>
+            </div>
+          </div>
+
           <!-- Divider -->
           <div class="pt-1">
-            <p class="text-xs font-medium" style="color: var(--sidebar-text)">Optional Information</p>
+            <p class="text-xs font-medium" style="color: var(--sidebar-text)">{{ $t('register.optional') }}</p>
           </div>
 
           <!-- Nickname -->
           <div class="space-y-1.5">
-            <label for="reg-nickname" class="block text-xs font-medium" style="color: var(--sidebar-text)">Nickname</label>
+            <label for="reg-nickname" class="block text-xs font-medium" style="color: var(--sidebar-text)">{{ $t('register.nickname') }}</label>
             <div class="relative">
               <SmilePlus class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none" style="color: var(--sidebar-text)" :stroke-width="1.75" />
               <input
                 id="reg-nickname"
                 v-model="nickname"
                 type="text"
-                placeholder="Display name"
+                :placeholder="$t('register.nicknamePlh')"
                 class="w-full pl-10 pr-4 py-2.5 rounded-lg text-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-violet-500/50"
                 style="background-color: var(--input-bg); border: 1px solid var(--input-border); color: var(--body-text)"
               />
@@ -230,14 +253,14 @@ async function handleRegister() {
 
           <!-- Email -->
           <div class="space-y-1.5">
-            <label for="reg-email" class="block text-xs font-medium" style="color: var(--sidebar-text)">Email</label>
+            <label for="reg-email" class="block text-xs font-medium" style="color: var(--sidebar-text)">{{ $t('register.email') }}</label>
             <div class="relative">
               <Mail class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none" style="color: var(--sidebar-text)" :stroke-width="1.75" />
               <input
                 id="reg-email"
                 v-model="email"
                 type="email"
-                placeholder="you@example.com"
+                :placeholder="$t('register.emailPlh')"
                 class="w-full pl-10 pr-4 py-2.5 rounded-lg text-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-violet-500/50"
                 style="background-color: var(--input-bg); border: 1px solid var(--input-border); color: var(--body-text)"
               />
@@ -246,14 +269,14 @@ async function handleRegister() {
 
           <!-- Phone -->
           <div class="space-y-1.5">
-            <label for="reg-phone" class="block text-xs font-medium" style="color: var(--sidebar-text)">Phone</label>
+            <label for="reg-phone" class="block text-xs font-medium" style="color: var(--sidebar-text)">{{ $t('register.phone') }}</label>
             <div class="relative">
               <Phone class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none" style="color: var(--sidebar-text)" :stroke-width="1.75" />
               <input
                 id="reg-phone"
                 v-model="phone"
                 type="tel"
-                placeholder="09xx-xxx-xxx"
+                :placeholder="$t('register.phonePlh')"
                 class="w-full pl-10 pr-4 py-2.5 rounded-lg text-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-violet-500/50"
                 style="background-color: var(--input-bg); border: 1px solid var(--input-border); color: var(--body-text)"
               />
@@ -272,20 +295,19 @@ async function handleRegister() {
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
             </svg>
             <UserPlus v-else class="w-4 h-4" :stroke-width="2" />
-            <span>{{ isLoading ? 'Creating Account…' : 'Create Account' }}</span>
+            <span>{{ isLoading ? $t('register.creatingBtn') : $t('register.createBtn') }}</span>
           </button>
         </form>
 
-        <!-- Footer -->
         <div class="mt-8 pt-5 text-center" style="border-top: 1px solid var(--card-border)">
           <p class="text-xs" style="color: var(--sidebar-text)">
-            Already have an account?
+            {{ $t('register.hasAccount') }}
             <router-link
               :to="{ name: 'Login' }"
               class="font-medium transition-colors hover:underline"
               style="color: var(--body-text)"
             >
-              <ArrowLeft class="w-3 h-3 inline -mt-0.5" /> Sign In
+              <ArrowLeft class="w-3 h-3 inline -mt-0.5" /> {{ $t('register.backLogin') }}
             </router-link>
           </p>
         </div>

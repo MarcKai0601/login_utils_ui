@@ -1,0 +1,72 @@
+{
+    "nav": {
+        "apps": "應用程式",
+        "profile": "個人資料",
+        "dashboard": "後台管理",
+        "logout": "登出"
+    },
+    "login": {
+        "title": "Login Utils",
+        "subtitle": "身分提供者 — SSO 閘道",
+        "redirect": "正在導向 → {url}",
+        "errorGen": "發生未預期的錯誤，請重試。",
+        "errorReq": "請輸入帳號與密碼。",
+        "username": "帳號",
+        "password": "密碼",
+        "usernamePlh": "請輸入帳號",
+        "passwordPlh": "請輸入密碼",
+        "signin": "登入",
+        "signingIn": "登入中…",
+        "noAccount": "還沒有帳號？",
+        "createAccount": "建立帳號",
+        "securedBy": "安全機制由 {name} 提供 · 身分提供者"
+    },
+    "register": {
+        "title": "建立帳號",
+        "subtitle": "在 Login Utils 註冊新身分",
+        "success": "帳號建立成功！正在導向登入頁...",
+        "errorReq": "帳號與密碼必填。",
+        "errorLen": "密碼至少需要 6 個字元。",
+        "errorMatch": "密碼與確認密碼不符。",
+        "usernameReq": "帳號 *",
+        "usernamePlh": "選擇一個帳號",
+        "passwordReq": "密碼 *",
+        "passwordPlh": "最少 6 個字元",
+        "confirmReq": "確認密碼 *",
+        "confirmPlh": "再次輸入密碼",
+        "optional": "選填資訊",
+        "nickname": "暱稱",
+        "nicknamePlh": "顯示名稱",
+        "email": "電子郵件",
+        "emailPlh": "you@example.com",
+        "phone": "電話",
+        "phonePlh": "09xx-xxx-xxx",
+        "language": "語言偏好 (選填)",
+        "createBtn": "建立帳號",
+        "creatingBtn": "建立中…",
+        "hasAccount": "已經有帳號？",
+        "backLogin": "返回登入"
+    },
+    "welcome": {
+        "title": "應用程式啟動器",
+        "subtitle": "歡迎回來，{user} · 請選擇要進入的系統",
+        "noAppsTitle": "沒有可用的應用程式",
+        "noAppsDesc": "請聯絡您的管理員以分配系統存取權限。",
+        "actionLaunch": "開啟",
+        "actionOpen": "進入"
+    },
+    "apps": {
+        "fas": {
+            "name": "資金分配系統",
+            "desc": "投資組合管理與資金分配平台"
+        },
+        "profile": {
+            "name": "個人資料設定",
+            "desc": "管理您的帳號資訊與安全性設定"
+        },
+        "admin": {
+            "name": "系統後台管理",
+            "desc": "系統總覽與服務狀態監控"
+        }
+    }
+}

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { Lock, User, Eye, EyeOff, LogIn, ShieldCheck } from 'lucide-vue-next'
 import { authApi } from '../api'
 import { useAuthStore } from '../store/auth'
@@ -8,6 +9,7 @@ import { useAuthStore } from '../store/auth'
 const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
+const { t, locale } = useI18n()
 
 // ─── Form State ───────────────────────────────────────────────
 const username = ref('')
@@ -30,7 +32,7 @@ async function handleLogin() {
   errorMessage.value = ''
 
   if (!username.value.trim() || !password.value.trim()) {
-    errorMessage.value = 'Please enter both username and password.'
+    errorMessage.value = t('login.errorReq')
     return
   }
 
@@ -47,7 +49,12 @@ async function handleLogin() {
 
     // Store credentials in Pinia + localStorage
     const primaryRole = data.role || 'USER'
-    authStore.login(data.token, data.userId, primaryRole, data.roles || [])
+    authStore.login(data.token, data.userId, primaryRole, data.roles || [], data.language || '')
+    
+    // Apply user preferred language globally
+    if (data.language) {
+      locale.value = data.language
+    }
 
     // SSO redirect logic
     if (redirectUrl.value) {
@@ -63,7 +70,7 @@ async function handleLogin() {
     } else if (err.message) {
       errorMessage.value = err.message
     } else {
-      errorMessage.value = 'An unexpected error occurred. Please try again.'
+      errorMessage.value = t('login.errorGen')
     }
   } finally {
     isLoading.value = false
@@ -86,15 +93,15 @@ async function handleLogin() {
           <div class="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-emerald-500 shrink-0 mb-4">
             <ShieldCheck class="w-6 h-6 text-white" :stroke-width="1.75" />
           </div>
-          <h1 class="text-xl font-bold leading-tight" style="color: var(--body-text)">Login Utils</h1>
-          <p class="text-xs mt-1" style="color: var(--sidebar-text)">Identity Provider — SSO Gateway</p>
+          <h1 class="text-xl font-bold leading-tight" style="color: var(--body-text)">{{ $t('login.title') }}</h1>
+          <p class="text-xs mt-1" style="color: var(--sidebar-text)">{{ $t('login.subtitle') }}</p>
           <div
             v-if="redirectUrl"
             class="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs transition-colors"
             style="background-color: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2)"
           >
             <LogIn class="w-3.5 h-3.5 text-emerald-400" />
-            <span class="text-emerald-400 truncate max-w-[240px]">Redirect → {{ redirectUrl }}</span>
+            <span class="text-emerald-400 truncate max-w-[240px]">{{ $t('login.redirect', { url: redirectUrl }) }}</span>
           </div>
         </div>
 
@@ -122,7 +129,7 @@ async function handleLogin() {
 
           <!-- Username -->
           <div class="space-y-1.5">
-            <label for="username" class="block text-xs font-medium" style="color: var(--sidebar-text)">Username</label>
+            <label for="username" class="block text-xs font-medium" style="color: var(--sidebar-text)">{{ $t('login.username') }}</label>
             <div class="relative">
               <User class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none" style="color: var(--sidebar-text)" :stroke-width="1.75" />
               <input
@@ -130,7 +137,7 @@ async function handleLogin() {
                 v-model="username"
                 type="text"
                 autocomplete="username"
-                placeholder="Enter your username"
+                :placeholder="$t('login.usernamePlh')"
                 class="w-full pl-10 pr-4 py-2.5 rounded-lg text-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
                 style="background-color: var(--input-bg); border: 1px solid var(--input-border); color: var(--body-text)"
               />
@@ -139,7 +146,7 @@ async function handleLogin() {
 
           <!-- Password -->
           <div class="space-y-1.5">
-            <label for="password" class="block text-xs font-medium" style="color: var(--sidebar-text)">Password</label>
+            <label for="password" class="block text-xs font-medium" style="color: var(--sidebar-text)">{{ $t('login.password') }}</label>
             <div class="relative">
               <Lock class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none" style="color: var(--sidebar-text)" :stroke-width="1.75" />
               <input
@@ -147,7 +154,7 @@ async function handleLogin() {
                 v-model="password"
                 :type="showPassword ? 'text' : 'password'"
                 autocomplete="current-password"
-                placeholder="Enter your password"
+                :placeholder="$t('login.passwordPlh')"
                 class="w-full pl-10 pr-10 py-2.5 rounded-lg text-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
                 style="background-color: var(--input-bg); border: 1px solid var(--input-border); color: var(--body-text)"
               />
@@ -176,25 +183,23 @@ async function handleLogin() {
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
             </svg>
             <LogIn v-else class="w-4 h-4" :stroke-width="2" />
-            <span>{{ isLoading ? 'Signing in…' : 'Sign In' }}</span>
+            <span>{{ isLoading ? $t('login.signingIn') : $t('login.signin') }}</span>
           </button>
         </form>
 
         <!-- Footer -->
         <div class="mt-8 pt-5 text-center space-y-2" style="border-top: 1px solid var(--card-border)">
           <p class="text-xs" style="color: var(--sidebar-text)">
-            Don't have an account?
+            {{ $t('login.noAccount') }}
             <router-link
               :to="{ name: 'Register' }"
               class="font-medium transition-colors hover:underline"
               style="color: var(--body-text)"
             >
-              Create Account
+              {{ $t('login.createAccount') }}
             </router-link>
           </p>
-          <p class="text-xs" style="color: var(--sidebar-text)">
-            Secured by <span style="color: var(--body-text)" class="font-medium">Login Utils</span> · Identity Provider
-          </p>
+          <p class="text-xs" style="color: var(--sidebar-text)" v-html="$t('login.securedBy', { name: '<span class=&quot;font-medium&quot; style=&quot;color: var(--body-text)&quot;>Login Utils</span>' })" />
         </div>
       </div>
     </div>

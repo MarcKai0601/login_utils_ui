@@ -1,0 +1,72 @@
+{
+    "nav": {
+        "apps": "Apps",
+        "profile": "Profile",
+        "dashboard": "Dashboard",
+        "logout": "Logout"
+    },
+    "login": {
+        "title": "Login Utils",
+        "subtitle": "Identity Provider — SSO Gateway",
+        "redirect": "Redirect → {url}",
+        "errorGen": "An unexpected error occurred. Please try again.",
+        "errorReq": "Please enter both username and password.",
+        "username": "Username",
+        "password": "Password",
+        "usernamePlh": "Enter your username",
+        "passwordPlh": "Enter your password",
+        "signin": "Sign In",
+        "signingIn": "Signing in…",
+        "noAccount": "Don't have an account?",
+        "createAccount": "Create Account",
+        "securedBy": "Secured by {name} · Identity Provider"
+    },
+    "register": {
+        "title": "Create Account",
+        "subtitle": "Register a new identity on Login Utils",
+        "success": "Account created successfully! Redirecting to login...",
+        "errorReq": "Username and password are required.",
+        "errorLen": "Password must be at least 6 characters.",
+        "errorMatch": "Passwords do not match.",
+        "usernameReq": "Username *",
+        "usernamePlh": "Choose a username",
+        "passwordReq": "Password *",
+        "passwordPlh": "Min. 6 characters",
+        "confirmReq": "Confirm Password *",
+        "confirmPlh": "Re-enter your password",
+        "optional": "Optional Information",
+        "nickname": "Nickname",
+        "nicknamePlh": "Display name",
+        "email": "Email",
+        "emailPlh": "you@example.com",
+        "phone": "Phone",
+        "phonePlh": "09xx-xxx-xxx",
+        "language": "Language Preference (Optional)",
+        "createBtn": "Create Account",
+        "creatingBtn": "Creating Account…",
+        "hasAccount": "Already have an account?",
+        "backLogin": "Sign In"
+    },
+    "welcome": {
+        "title": "App Launcher",
+        "subtitle": "Welcome back, {user} · Select a system to continue",
+        "noAppsTitle": "No applications available",
+        "noAppsDesc": "Contact your administrator to assign system access.",
+        "actionLaunch": "Launch",
+        "actionOpen": "Open"
+    },
+    "apps": {
+        "fas": {
+            "name": "Fund Allocation System",
+            "desc": "Portfolio management & fund distribution platform"
+        },
+        "profile": {
+            "name": "Profile Settings",
+            "desc": "Manage your account information and security settings"
+        },
+        "admin": {
+            "name": "Admin Dashboard",
+            "desc": "System overview & service monitoring"
+        }
+    }
+}

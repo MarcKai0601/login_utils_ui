@@ -2,13 +2,15 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../store/auth'
+import { useI18n } from 'vue-i18n'
 import {
   Landmark, ShieldCheck, LayoutDashboard,
-  ExternalLink, Grid3x3, LogOut
+  ExternalLink, Grid3x3, LogOut, UserCircle
 } from 'lucide-vue-next'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const { t } = useI18n()
 
 // ─── App Registry ─────────────────────────────────────────────
 // Maps systemCode → app metadata. Add new entries as systems grow.
@@ -23,40 +25,43 @@ interface AppEntry {
   internalRoute?: string // Vue Router named route
 }
 
-const APP_REGISTRY: AppEntry[] = [
+const APP_REGISTRY = computed<AppEntry[]>(() => [
   {
     systemCode: 'FAS',
-    name: 'Fund Allocation System',
-    description: 'Portfolio management & fund distribution platform',
+    name: t('apps.fas.name'),
+    description: t('apps.fas.desc'),
     icon: Landmark,
     color: 'amber',
     bgGradient: 'linear-gradient(135deg, rgba(245,158,11,0.15), rgba(217,119,6,0.05))',
     url: 'http://localhost:3000',
   },
   {
-    systemCode: 'MGR',
-    name: 'Login Utils MGR',
-    description: 'User & role management console',
-    icon: ShieldCheck,
+    systemCode: 'PROFILE_INTERNAL', // Special code for internal always-visible card
+    name: t('apps.profile.name'),
+    description: t('apps.profile.desc'),
+    icon: UserCircle,
     color: 'violet',
     bgGradient: 'linear-gradient(135deg, rgba(139,92,246,0.15), rgba(109,40,217,0.05))',
-    url: 'http://localhost:8081',
+    url: '',
+    internalRoute: 'Profile',
   },
   {
     systemCode: 'SUPER_ADMIN',
-    name: 'Admin Dashboard',
-    description: 'System overview & service monitoring',
+    name: t('apps.admin.name'),
+    description: t('apps.admin.desc'),
     icon: LayoutDashboard,
     color: 'emerald',
     bgGradient: 'linear-gradient(135deg, rgba(16,185,129,0.15), rgba(5,150,105,0.05))',
     url: '',
     internalRoute: 'Dashboard',
   },
-]
+])
 
 // ─── Derive visible apps from user roles ──────────────────────
 const userSystemCodes = computed(() => {
   const codes = new Set<string>()
+  // Always include Profile
+  codes.add('PROFILE_INTERNAL')
   // From roles array
   authStore.roles.forEach((r) => codes.add(r.systemCode))
   // Also include primary role (e.g. SUPER_ADMIN)
@@ -65,7 +70,7 @@ const userSystemCodes = computed(() => {
 })
 
 const visibleApps = computed(() =>
-  APP_REGISTRY.filter((app) => userSystemCodes.value.has(app.systemCode))
+  APP_REGISTRY.value.filter((app) => userSystemCodes.value.has(app.systemCode))
 )
 
 // ─── Card colour helpers ──────────────────────────────────────
@@ -110,12 +115,9 @@ function handleLogout() {
           <Grid3x3 class="w-7 h-7 text-emerald-400" :stroke-width="1.5" />
         </div>
         <h1 class="text-2xl md:text-3xl font-bold tracking-tight mb-2" style="color: var(--body-text)">
-          App Launcher
+          {{ $t('welcome.title') }}
         </h1>
-        <p class="text-sm" style="color: var(--sidebar-text)">
-          Welcome back, <span class="font-medium" style="color: var(--body-text)">{{ authStore.userId || 'User' }}</span>
-          · Select a system to continue
-        </p>
+        <p class="text-sm" style="color: var(--sidebar-text)" v-html="$t('welcome.subtitle', { user: `<span class=&quot;font-medium&quot; style=&quot;color: var(--body-text)&quot;>${authStore.userId || 'User'}</span>` })" />
       </div>
 
       <!-- App Grid -->
@@ -173,7 +175,7 @@ function handleLogout() {
 
           <!-- Launch indicator -->
           <div class="flex items-center gap-1.5 text-xs font-medium" :style="{ color: iconColorMap[app.color] }">
-            <span>{{ app.internalRoute ? 'Open' : 'Launch' }}</span>
+            <span>{{ app.internalRoute ? $t('welcome.actionOpen') : $t('welcome.actionLaunch') }}</span>
             <ExternalLink class="w-3 h-3" :stroke-width="2" />
           </div>
         </button>
@@ -190,17 +192,15 @@ function handleLogout() {
           style="color: var(--sidebar-text); opacity: 0.3"
           :stroke-width="1.5"
         />
-        <p class="text-sm font-medium mb-1" style="color: var(--body-text)">No applications available</p>
+        <p class="text-sm font-medium mb-1" style="color: var(--body-text)">{{ $t('welcome.noAppsTitle') }}</p>
         <p class="text-xs" style="color: var(--sidebar-text)">
-          Contact your administrator to assign system access.
+          {{ $t('welcome.noAppsDesc') }}
         </p>
       </div>
 
       <!-- Footer -->
       <div class="mt-12 flex items-center justify-between">
-        <p class="text-xs" style="color: var(--sidebar-text)">
-          Secured by <span class="font-medium" style="color: var(--body-text)">Login Utils</span> · Identity Provider
-        </p>
+        <p class="text-xs" style="color: var(--sidebar-text)" v-html="$t('login.securedBy', { name: '<span class=&quot;font-medium&quot; style=&quot;color: var(--body-text)&quot;>Login Utils</span>' })" />
         <button
           id="welcome-logout-button"
           @click="handleLogout"
@@ -210,7 +210,7 @@ function handleLogout() {
           @mouseleave="($event.currentTarget as HTMLElement).style.color = 'var(--sidebar-text)'"
         >
           <LogOut class="w-3.5 h-3.5" :stroke-width="2" />
-          <span>Sign Out</span>
+          <span>{{ $t('nav.logout') }}</span>
         </button>
       </div>
     </div>

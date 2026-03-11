@@ -1,0 +1,72 @@
+{
+    "nav": {
+        "apps": "앱",
+        "profile": "프로필",
+        "dashboard": "대시보드",
+        "logout": "로그아웃"
+    },
+    "login": {
+        "title": "Login Utils",
+        "subtitle": "ID 제공자 — SSO 게이트웨이",
+        "redirect": "리디렉션 중 → {url}",
+        "errorGen": "예기치 않은 오류가 발생했습니다. 다시 시도해 주세요.",
+        "errorReq": "사용자 이름과 비밀번호를 입력해 주세요.",
+        "username": "사용자 이름",
+        "password": "비밀번호",
+        "usernamePlh": "사용자 이름 입력",
+        "passwordPlh": "비밀번호 입력",
+        "signin": "로그인",
+        "signingIn": "로그인 중…",
+        "noAccount": "계정이 없으신가요?",
+        "createAccount": "계정 만들기",
+        "securedBy": "{name} 보안 · ID 제공자"
+    },
+    "register": {
+        "title": "계정 만들기",
+        "subtitle": "Login Utils에 새 ID 등록",
+        "success": "계정이 성공적으로 생성되었습니다! 로그인 페이지로 이동합니다...",
+        "errorReq": "사용자 이름과 비밀번호는 필수 항목입니다.",
+        "errorLen": "비밀번호는 6자 이상이어야 합니다.",
+        "errorMatch": "비밀번호가 일치하지 않습니다.",
+        "usernameReq": "사용자 이름 *",
+        "usernamePlh": "사용자 이름 선택",
+        "passwordReq": "비밀번호 *",
+        "passwordPlh": "최소 6자",
+        "confirmReq": "비밀번호 확인 *",
+        "confirmPlh": "비밀번호 재입력",
+        "optional": "선택 정보",
+        "nickname": "닉네임",
+        "nicknamePlh": "표시 이름",
+        "email": "이메일",
+        "emailPlh": "you@example.com",
+        "phone": "전화번호",
+        "phonePlh": "09xx-xxx-xxx",
+        "language": "언어 설정 (선택)",
+        "createBtn": "계정 만들기",
+        "creatingBtn": "생성 중…",
+        "hasAccount": "이미 계정이 있으신가요?",
+        "backLogin": "로그인"
+    },
+    "welcome": {
+        "title": "앱 런처",
+        "subtitle": "환영합니다, {user} · 계속할 시스템을 선택하세요",
+        "noAppsTitle": "사용 가능한 앱이 없습니다",
+        "noAppsDesc": "시스템 접근 권한을 할당받으려면 관리자에게 문의하세요.",
+        "actionLaunch": "실행",
+        "actionOpen": "열기"
+    },
+    "apps": {
+        "fas": {
+            "name": "자금 할당 시스템",
+            "desc": "포트폴리오 관리 및 자금 분배 플랫폼"
+        },
+        "profile": {
+            "name": "프로필 설정",
+            "desc": "계정 정보 및 보안 설정 관리"
+        },
+        "admin": {
+            "name": "시스템 관리 대시보드",
+            "desc": "시스템 개요 및 서비스 모니터링"
+        }
+    }
+}

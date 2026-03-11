@@ -1,0 +1,72 @@
+{
+    "nav": {
+        "apps": "アプリ",
+        "profile": "プロフィール",
+        "dashboard": "ダッシュボード",
+        "logout": "ログアウト"
+    },
+    "login": {
+        "title": "Login Utils",
+        "subtitle": "アイデンティティプロバイダ — SSOゲートウェイ",
+        "redirect": "リダイレクト中 → {url}",
+        "errorGen": "予期せぬエラーが発生しました。もう一度お試しください。",
+        "errorReq": "ユーザー名とパスワードを入力してください。",
+        "username": "ユーザー名",
+        "password": "パスワード",
+        "usernamePlh": "ユーザー名を入力",
+        "passwordPlh": "パスワードを入力",
+        "signin": "ログイン",
+        "signingIn": "ログイン中…",
+        "noAccount": "アカウントをお持ちではありませんか？",
+        "createAccount": "アカウント作成",
+        "securedBy": "{name} が保護 · アイデンティティプロバイダ"
+    },
+    "register": {
+        "title": "アカウント作成",
+        "subtitle": "Login Utilsで新しいIDを登録",
+        "success": "アカウントが作成されました！ログイン画面にリダイレクトします...",
+        "errorReq": "ユーザー名とパスワードは必須です。",
+        "errorLen": "パスワードは6文字以上で入力してください。",
+        "errorMatch": "パスワードが一致しません。",
+        "usernameReq": "ユーザー名 *",
+        "usernamePlh": "ユーザー名を選択",
+        "passwordReq": "パスワード *",
+        "passwordPlh": "最低6文字",
+        "confirmReq": "パスワード確認 *",
+        "confirmPlh": "パスワードを再入力",
+        "optional": "オプション情報",
+        "nickname": "ニックネーム",
+        "nicknamePlh": "表示名",
+        "email": "メールアドレス",
+        "emailPlh": "you@example.com",
+        "phone": "電話番号",
+        "phonePlh": "09xx-xxx-xxx",
+        "language": "言語の好み (任意)",
+        "createBtn": "アカウント作成",
+        "creatingBtn": "作成中…",
+        "hasAccount": "すでにアカウントをお持ちですか？",
+        "backLogin": "ログイン"
+    },
+    "welcome": {
+        "title": "アプリランチャー",
+        "subtitle": "お帰りなさい、{user} · 続行するシステムを選択してください",
+        "noAppsTitle": "利用できるアプリがありません",
+        "noAppsDesc": "システムへのアクセス権を割り当てるには、管理者に連絡してください。",
+        "actionLaunch": "起動",
+        "actionOpen": "開く"
+    },
+    "apps": {
+        "fas": {
+            "name": "資金配分システム",
+            "desc": "ポートフォリオ管理および資金配分プラットフォーム"
+        },
+        "profile": {
+            "name": "プロフィール設定",
+            "desc": "アカウント情報とセキュリティ設定の管理"
+        },
+        "admin": {
+            "name": "システム管理ダッシュボード",
+            "desc": "システムの概要とサービス監視"
+        }
+    }
+}

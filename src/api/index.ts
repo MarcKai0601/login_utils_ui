@@ -43,6 +43,7 @@ export interface LoginResponseData {
     userId: number
     role: string
     roles: RoleInfo[]
+    language?: string
 }
 
 export interface RegisterRequestData {
@@ -54,6 +55,7 @@ export interface RegisterRequestData {
     email?: string
     phone?: string
     memo?: string
+    language?: string
 }
 
 export interface MgrResponse<T = unknown> {

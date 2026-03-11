@@ -2,7 +2,8 @@
 import { computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '../store/auth'
-import { LayoutDashboard, UserCircle, LogOut, ShieldCheck, Grid3x3 } from 'lucide-vue-next'
+import { useI18n } from 'vue-i18n'
+import { LayoutDashboard, UserCircle, LogOut, ShieldCheck, Grid3x3, Globe } from 'lucide-vue-next'
 
 const router = useRouter()
 const route = useRoute()
@@ -13,14 +14,28 @@ function handleLogout() {
   router.push({ name: 'Login' })
 }
 
+const { t, locale } = useI18n()
+
+// Language Selector Logic
+const supportedLocales = [
+  { code: 'zh-TW', label: '繁體中文' },
+  { code: 'en', label: 'English' },
+  { code: 'ja', label: '日本語' },
+  { code: 'ko', label: '한국어' }
+]
+
+function switchLanguage(code: string) {
+  locale.value = code
+}
+
 // Build nav items dynamically based on role
 const navItems = computed(() => {
   const items = [
-    { name: 'Apps', routeName: 'Welcome', icon: Grid3x3 },
-    { name: 'Profile', routeName: 'Profile', icon: UserCircle },
+    { name: t('nav.apps'), routeName: 'Welcome', icon: Grid3x3 },
+    { name: t('nav.profile'), routeName: 'Profile', icon: UserCircle },
   ]
   if (authStore.isSuperAdmin) {
-    items.push({ name: 'Dashboard', routeName: 'Dashboard', icon: LayoutDashboard })
+    items.push({ name: t('nav.dashboard'), routeName: 'Dashboard', icon: LayoutDashboard })
   }
   return items
 })
@@ -75,8 +90,46 @@ const navItems = computed(() => {
       </div>
     </div>
 
-    <!-- Right: User + Logout -->
-    <div class="flex items-center gap-3">
+    <!-- Right: Language + User + Logout -->
+    <div class="flex items-center gap-1 sm:gap-3">
+      <!-- Language Switcher -->
+      <div class="relative group mr-2">
+        <button
+          class="flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-sm transition-colors duration-200 cursor-pointer"
+          style="color: var(--sidebar-text)"
+          @mouseenter="($event.currentTarget as HTMLElement).style.color = 'var(--body-text)'"
+          @mouseleave="($event.currentTarget as HTMLElement).style.color = 'var(--sidebar-text)'"
+        >
+          <Globe class="w-4 h-4" :stroke-width="1.75" />
+          <span class="text-xs font-medium uppercase">{{ locale.split('-')[0] }}</span>
+        </button>
+        <!-- Dropdown Menu -->
+        <div 
+          class="absolute right-0 top-full mt-1 w-32 py-1.5 rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 shadow-lg"
+          style="background-color: var(--card-bg); border: 1px solid var(--card-border)"
+        >
+          <button
+            v-for="lang in supportedLocales"
+            :key="lang.code"
+            @click="switchLanguage(lang.code)"
+            class="w-full text-left px-3 py-1.5 text-xs transition-colors duration-150"
+            :style="{
+              color: locale === lang.code ? '#10b981' : 'var(--body-text)',
+              backgroundColor: locale === lang.code ? 'rgba(16, 185, 129, 0.1)' : 'transparent',
+              fontWeight: locale === lang.code ? '500' : '400'
+            }"
+            @mouseenter="(e: MouseEvent) => {
+              if (locale !== lang.code) (e.currentTarget as HTMLElement).style.backgroundColor = 'var(--input-bg)';
+            }"
+            @mouseleave="(e: MouseEvent) => {
+              if (locale !== lang.code) (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent';
+            }"
+          >
+            {{ lang.label }}
+          </button>
+        </div>
+      </div>
+
       <span class="text-xs hidden sm:inline" style="color: var(--sidebar-text)">
         {{ authStore.userId || 'User' }}
       </span>
@@ -89,7 +142,7 @@ const navItems = computed(() => {
         @mouseleave="($event.currentTarget as HTMLElement).style.color = 'var(--sidebar-text)'"
       >
         <LogOut class="w-4 h-4" :stroke-width="1.75" />
-        <span class="hidden sm:inline">Logout</span>
+        <span class="hidden sm:inline">{{ $t('nav.logout') }}</span>
       </button>
     </div>
   </nav>
