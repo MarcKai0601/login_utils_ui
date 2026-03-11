@@ -68,5 +68,20 @@
             "name": "系統後台管理",
             "desc": "系統總覽與服務狀態監控"
         }
+    },
+    "profile": {
+        "title": "個人資料",
+        "subtitle": "您的帳號資訊與安全性詳細資料",
+        "accountInfo": "帳號資訊",
+        "accountDesc": "基本身分資訊",
+        "username": "使用者名稱",
+        "userId": "使用者 ID",
+        "status": "狀態",
+        "active": "啟用",
+        "rbacRole": "RBAC 角色",
+        "rbacDesc": "指派的主要系統角色",
+        "primaryRole": "主要角色",
+        "noRole": "尚未指派角色",
+        "contactAdmin": "請聯絡管理員以指派系統角色"
     }
 }

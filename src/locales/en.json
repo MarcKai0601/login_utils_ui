@@ -65,8 +65,23 @@
             "desc": "Manage your account information and security settings"
         },
         "admin": {
-            "name": "Admin Dashboard",
-            "desc": "System overview & service monitoring"
+            "name": "System Backend Management",
+            "desc": "System overview and service status monitoring"
         }
+    },
+    "profile": {
+        "title": "Profile",
+        "subtitle": "Your account information and security details",
+        "accountInfo": "Account Information",
+        "accountDesc": "Basic identity details",
+        "username": "Username",
+        "userId": "User ID",
+        "status": "Status",
+        "active": "Active",
+        "rbacRole": "RBAC Role",
+        "rbacDesc": "Assigned primary role",
+        "primaryRole": "Primary Role",
+        "noRole": "No role assigned yet",
+        "contactAdmin": "Contact administrator to assign a role"
     }
 }
