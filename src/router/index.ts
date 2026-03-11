@@ -46,9 +46,12 @@ const router = createRouter({
 router.beforeEach((to, _from, next) => {
     const authStore = useAuthStore()
 
-    // 1. 未登入 → 導向登入頁
-    if (to.meta.requiresAuth && !authStore.isAuthenticated) {
-        next({ name: 'Login' })
+    const publicPages = ['/login', '/register']
+    const authRequired = !publicPages.includes(to.path)
+
+    // 1. 全域驗證：非公開頁面且沒有 Token 時，強制導向登入頁
+    if (authRequired && !authStore.token) {
+        next('/login')
         return
     }
 

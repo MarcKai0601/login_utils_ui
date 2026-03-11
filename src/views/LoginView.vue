@@ -11,6 +11,9 @@ const route = useRoute()
 const authStore = useAuthStore()
 const { t, locale } = useI18n()
 
+// Force logout immediately when visiting the login page to clear any stale state
+authStore.logout()
+
 // ─── Form State ───────────────────────────────────────────────
 const username = ref('')
 const password = ref('')
@@ -49,7 +52,7 @@ async function handleLogin() {
 
     // Store credentials in Pinia + localStorage
     const primaryRole = data.role || 'USER'
-    authStore.login(data.token, data.userId, primaryRole, data.roles || [], data.language || '')
+    authStore.login(data.token, data.userId, data.username || username.value, primaryRole, data.roles || [], data.language || '')
     
     // Apply user preferred language globally
     if (data.language) {
@@ -58,8 +61,10 @@ async function handleLogin() {
 
     // SSO redirect logic
     if (redirectUrl.value) {
-      const separator = redirectUrl.value.includes('?') ? '&' : '?'
-      window.location.href = `${redirectUrl.value}${separator}token=${data.token}`
+      // 跨域或跨專案跳轉，使用原生 window.location.href 並結合 URL 解構
+      const targetUrl = new URL(redirectUrl.value, window.location.origin)
+      targetUrl.searchParams.set('token', data.token)
+      window.location.href = targetUrl.toString()
     } else {
       // No external redirect → go to App Launcher
       router.push({ name: 'Welcome' })

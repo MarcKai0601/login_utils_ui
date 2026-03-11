@@ -41,6 +41,7 @@ apiClient.interceptors.response.use(
 export interface LoginResponseData {
     token: string
     userId: number
+    username: string
     role: string
     roles: RoleInfo[]
     language?: string

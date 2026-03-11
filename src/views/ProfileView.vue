@@ -34,6 +34,17 @@ const authStore = useAuthStore()
             class="flex items-center gap-3 p-3 rounded-lg"
             style="background-color: var(--input-bg); border: 1px solid var(--card-border)"
           >
+            <User class="w-4 h-4 shrink-0" style="color: var(--sidebar-text)" :stroke-width="1.75" />
+            <div>
+              <p class="text-xs uppercase tracking-wider" style="color: var(--sidebar-text)">Username</p>
+              <p class="text-sm font-medium" style="color: var(--body-text)">{{ authStore.username || 'N/A' }}</p>
+            </div>
+          </div>
+
+          <div
+            class="flex items-center gap-3 p-3 rounded-lg"
+            style="background-color: var(--input-bg); border: 1px solid var(--card-border)"
+          >
             <Fingerprint class="w-4 h-4 shrink-0" style="color: var(--sidebar-text)" :stroke-width="1.75" />
             <div>
               <p class="text-xs uppercase tracking-wider" style="color: var(--sidebar-text)">User ID</p>

@@ -4,8 +4,8 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '../store/auth'
 import { useI18n } from 'vue-i18n'
 import {
-  Landmark, ShieldCheck, LayoutDashboard,
-  ExternalLink, Grid3x3, LogOut, UserCircle
+  Landmark, LayoutDashboard,
+  ExternalLink, Grid3x3, LogOut, UserCircle, Lock
 } from 'lucide-vue-next'
 
 const router = useRouter()
@@ -69,8 +69,12 @@ const userSystemCodes = computed(() => {
   return codes
 })
 
-const visibleApps = computed(() =>
-  APP_REGISTRY.value.filter((app) => userSystemCodes.value.has(app.systemCode))
+// Map ALL apps, but add a hasAccess boolean
+const allAppsWithAccess = computed(() =>
+  APP_REGISTRY.value.map((app) => ({
+    ...app,
+    hasAccess: userSystemCodes.value.has(app.systemCode)
+  }))
 )
 
 // ─── Card colour helpers ──────────────────────────────────────
@@ -87,13 +91,20 @@ const iconBgMap: Record<string, string> = {
 }
 
 // ─── Navigate ─────────────────────────────────────────────────
-function launchApp(app: AppEntry) {
+function launchApp(app: AppEntry & { hasAccess: boolean }) {
+  if (!app.hasAccess) return
+
   if (app.internalRoute) {
     router.push({ name: app.internalRoute })
   } else {
     const separator = app.url.includes('?') ? '&' : '?'
     window.location.href = `${app.url}${separator}token=${authStore.token}`
   }
+}
+
+function requestAccess(systemCode: string) {
+  // TODO: Connect this to an actual backend API for requesting access
+  alert(`已送出 [${systemCode}] 權限申請，請等候管理員審核。\nRequest for [${systemCode}] access submitted successfully, pending administrator approval.`)
 }
 
 function handleLogout() {
@@ -117,37 +128,43 @@ function handleLogout() {
         <h1 class="text-2xl md:text-3xl font-bold tracking-tight mb-2" style="color: var(--body-text)">
           {{ $t('welcome.title') }}
         </h1>
-        <p class="text-sm" style="color: var(--sidebar-text)" v-html="$t('welcome.subtitle', { user: `<span class=&quot;font-medium&quot; style=&quot;color: var(--body-text)&quot;>${authStore.userId || 'User'}</span>` })" />
+        <p class="text-sm" style="color: var(--sidebar-text)" v-html="$t('welcome.subtitle', { user: `<span class=&quot;font-medium&quot; style=&quot;color: var(--body-text)&quot;>${authStore.username || 'User'}</span>` })" />
       </div>
 
       <!-- App Grid -->
       <div
-        v-if="visibleApps.length > 0"
+        v-if="allAppsWithAccess.length > 0"
         class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
       >
-        <button
-          v-for="app in visibleApps"
+        <div
+          v-for="app in allAppsWithAccess"
           :key="app.systemCode"
           :id="`app-card-${app.systemCode.toLowerCase()}`"
-          @click="launchApp(app)"
-          class="group relative rounded-xl p-6 text-left transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+          class="group relative rounded-xl p-6 text-left transition-all duration-200"
+          :class="{
+            'cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500/50': app.hasAccess,
+            'opacity-70 grayscale cursor-default': !app.hasAccess
+          }"
           :style="{
             backgroundColor: 'var(--card-bg)',
             border: '1px solid var(--card-border)',
           }"
+          @click="app.hasAccess ? launchApp(app) : undefined"
           @mouseenter="(e: MouseEvent) => {
-            const el = e.currentTarget as HTMLElement
-            el.style.background = app.bgGradient
-            el.style.borderColor = iconColorMap[app.color] + '33'
-            el.style.transform = 'translateY(-2px)'
-            el.style.boxShadow = `0 8px 24px ${iconColorMap[app.color]}15`
+            if (!app.hasAccess) return;
+            const el = e.currentTarget as HTMLElement;
+            el.style.background = app.bgGradient;
+            el.style.borderColor = iconColorMap[app.color] + '33';
+            el.style.transform = 'translateY(-2px)';
+            el.style.boxShadow = `0 8px 24px ${iconColorMap[app.color]}15`;
           }"
           @mouseleave="(e: MouseEvent) => {
-            const el = e.currentTarget as HTMLElement
-            el.style.background = 'var(--card-bg)'
-            el.style.borderColor = 'var(--card-border)'
-            el.style.transform = 'translateY(0)'
-            el.style.boxShadow = 'none'
+            if (!app.hasAccess) return;
+            const el = e.currentTarget as HTMLElement;
+            el.style.background = 'var(--card-bg)';
+            el.style.borderColor = 'var(--card-border)';
+            el.style.transform = 'translateY(0)';
+            el.style.boxShadow = 'none';
           }"
         >
           <!-- Icon -->
@@ -174,11 +191,23 @@ function handleLogout() {
           </p>
 
           <!-- Launch indicator -->
-          <div class="flex items-center gap-1.5 text-xs font-medium" :style="{ color: iconColorMap[app.color] }">
+          <div v-if="app.hasAccess" class="flex items-center gap-1.5 text-xs font-medium" :style="{ color: iconColorMap[app.color] }">
             <span>{{ app.internalRoute ? $t('welcome.actionOpen') : $t('welcome.actionLaunch') }}</span>
             <ExternalLink class="w-3 h-3" :stroke-width="2" />
           </div>
-        </button>
+
+          <!-- Request Access Action -->
+          <div v-else class="flex items-center">
+            <button
+              @click.stop="requestAccess(app.systemCode)"
+              class="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border transition-colors cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
+              style="color: var(--sidebar-text); border-color: var(--card-border);"
+            >
+              <Lock class="w-3 h-3" :stroke-width="2" />
+              <span>申請開通 (Request Access)</span>
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- Empty State -->

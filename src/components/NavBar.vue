@@ -131,7 +131,7 @@ const navItems = computed(() => {
       </div>
 
       <span class="text-xs hidden sm:inline" style="color: var(--sidebar-text)">
-        {{ authStore.userId || 'User' }}
+        {{ authStore.username || 'User' }}
       </span>
       <button
         id="nav-logout-button"

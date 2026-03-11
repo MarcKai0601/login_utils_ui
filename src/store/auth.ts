@@ -11,6 +11,7 @@ export const useAuthStore = defineStore('auth', () => {
     // --------------- State ---------------
     const token = ref<string>(localStorage.getItem('token') || '')
     const userId = ref<string>(localStorage.getItem('userId') || '')
+    const username = ref<string>(localStorage.getItem('username') || '')
     const role = ref<string>(localStorage.getItem('role') || '')
     const roles = ref<RoleInfo[]>(JSON.parse(localStorage.getItem('roles') || '[]'))
     const language = ref<string>(localStorage.getItem('language') || '')
@@ -20,15 +21,17 @@ export const useAuthStore = defineStore('auth', () => {
     const isSuperAdmin = computed(() => role.value === 'SUPER_ADMIN')
 
     // --------------- Actions ---------------
-    function login(newToken: string, newUserId: string | number, newRole: string = 'USER', newRoles: RoleInfo[] = [], newLanguage: string = '') {
+    function login(newToken: string, newUserId: string | number, newUsername: string = '', newRole: string = 'USER', newRoles: RoleInfo[] = [], newLanguage: string = '') {
         token.value = newToken
         userId.value = String(newUserId)
+        username.value = newUsername
         role.value = newRole
         roles.value = newRoles
         if (newLanguage) language.value = newLanguage
 
         localStorage.setItem('token', newToken)
         localStorage.setItem('userId', String(newUserId))
+        localStorage.setItem('username', newUsername)
         localStorage.setItem('role', newRole)
         localStorage.setItem('roles', JSON.stringify(newRoles))
         if (newLanguage) localStorage.setItem('language', newLanguage)
@@ -37,12 +40,14 @@ export const useAuthStore = defineStore('auth', () => {
     function logout() {
         token.value = ''
         userId.value = ''
+        username.value = ''
         role.value = ''
         roles.value = []
         language.value = ''
 
         localStorage.removeItem('token')
         localStorage.removeItem('userId')
+        localStorage.removeItem('username')
         localStorage.removeItem('role')
         localStorage.removeItem('roles')
         localStorage.removeItem('language')
@@ -51,6 +56,7 @@ export const useAuthStore = defineStore('auth', () => {
     return {
         token,
         userId,
+        username,
         role,
         roles,
         language,
