@@ -1,7 +1,6 @@
 import axios from 'axios'
 import { useAuthStore } from '../store/auth'
 import type { RoleInfo } from '../store/auth'
-import router from '../router'
 
 // ─── Axios Instance ────────────────────────────────────────────
 const apiClient = axios.create({
@@ -31,7 +30,8 @@ apiClient.interceptors.response.use(
         if (error.response?.status === 401) {
             const authStore = useAuthStore()
             authStore.logout()
-            router.push('/login')
+            alert('登入已逾期，請重新登入 / Login expired, please login again.')
+            window.location.href = '/login'
         }
         return Promise.reject(error)
     },
@@ -80,6 +80,17 @@ export const authApi = {
             status: data.status ?? 1,
             roleId: data.roleId ?? 1,
         })
+    },
+
+    updatePassword(data: { oldPassword: string; newPassword: string }) {
+        return apiClient.post<MgrResponse<null>>('/api/mgr/user/update-password', data)
+    },
+}
+
+// ─── System API ───────────────────────────────────────────────
+export const systemApi = {
+    getVersion() {
+        return apiClient.get<MgrResponse<{ version: string }>>('/api/v1/system/version')
     },
 }
 

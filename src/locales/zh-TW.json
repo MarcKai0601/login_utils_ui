@@ -82,6 +82,24 @@
         "rbacDesc": "指派的主要系統角色",
         "primaryRole": "主要角色",
         "noRole": "尚未指派角色",
-        "contactAdmin": "請聯絡管理員以指派系統角色"
+        "contactAdmin": "請聯絡管理員以指派系統角色",
+        "password": {
+            "changeBtn": "修改密碼",
+            "modalTitle": "修改密碼",
+            "modalDesc": "請輸入您目前的密碼與新密碼。",
+            "oldLabel": "目前密碼",
+            "oldPlh": "輸入目前的密碼",
+            "newLabel": "新密碼",
+            "newPlh": "輸入至少 6 碼的新密碼",
+            "confirmLabel": "確認新密碼",
+            "confirmPlh": "再次輸入新密碼",
+            "cancelBtn": "取消",
+            "submitBtn": "確認修改",
+            "savingBtn": "修改中...",
+            "errRequired": "所有欄位皆為必填",
+            "errLength": "新密碼長度必須至少 6 個字元",
+            "errMatch": "兩次輸入的新密碼不一致",
+            "successMsg": "密碼修改成功"
+        }
     }
 }

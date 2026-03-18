@@ -82,6 +82,24 @@
         "rbacDesc": "割り当てられた主要なシステムロール",
         "primaryRole": "主要ロール",
         "noRole": "ロールがまだ割り当てられていません",
-        "contactAdmin": "管理者に連絡してロールを割り当ててください"
+        "contactAdmin": "管理者に連絡してロールを割り当ててください",
+        "password": {
+            "changeBtn": "パスワード変更",
+            "modalTitle": "パスワード変更",
+            "modalDesc": "現在のパスワードと新しいパスワードを入力してください。",
+            "oldLabel": "現在のパスワード",
+            "oldPlh": "現在のパスワードを入力",
+            "newLabel": "新しいパスワード",
+            "newPlh": "6文字以上で入力",
+            "confirmLabel": "パスワード(確認)",
+            "confirmPlh": "もう一度新しいパスワードを入力",
+            "cancelBtn": "キャンセル",
+            "submitBtn": "変更する",
+            "savingBtn": "変更中...",
+            "errRequired": "すべての項目を入力してください",
+            "errLength": "新しいパスワードは6文字以上で入力してください",
+            "errMatch": "パスワードが一致しません",
+            "successMsg": "パスワードが正常に変更されました"
+        }
     }
 }

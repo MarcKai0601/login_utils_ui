@@ -5,6 +5,7 @@ import { useI18n } from 'vue-i18n'
 import { Lock, User, Eye, EyeOff, LogIn, ShieldCheck } from 'lucide-vue-next'
 import { authApi } from '../api'
 import { useAuthStore } from '../store/auth'
+import { getFullVersion } from '../version'
 
 const router = useRouter()
 const route = useRoute()
@@ -205,6 +206,7 @@ async function handleLogin() {
             </router-link>
           </p>
           <p class="text-xs" style="color: var(--sidebar-text)" v-html="$t('login.securedBy', { name: '<span class=&quot;font-medium&quot; style=&quot;color: var(--body-text)&quot;>Login Utils</span>' })" />
+          <p class="text-[10px] mt-2 font-mono tracking-wider" style="color: var(--sidebar-text); opacity: 0.5">{{ getFullVersion() }}</p>
         </div>
       </div>
     </div>

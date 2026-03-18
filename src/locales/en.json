@@ -82,6 +82,24 @@
         "rbacDesc": "Assigned primary role",
         "primaryRole": "Primary Role",
         "noRole": "No role assigned yet",
-        "contactAdmin": "Contact administrator to assign a role"
+        "contactAdmin": "Contact administrator to assign a role",
+        "password": {
+            "changeBtn": "Change Password",
+            "modalTitle": "Change Password",
+            "modalDesc": "Please enter your current and new password.",
+            "oldLabel": "Current Password",
+            "oldPlh": "Enter current password",
+            "newLabel": "New Password",
+            "newPlh": "Enter at least 6 characters",
+            "confirmLabel": "Confirm New Password",
+            "confirmPlh": "Enter new password again",
+            "cancelBtn": "Cancel",
+            "submitBtn": "Update Password",
+            "savingBtn": "Updating...",
+            "errRequired": "All fields are required",
+            "errLength": "New password must be at least 6 characters",
+            "errMatch": "Passwords do not match",
+            "successMsg": "Password updated successfully"
+        }
     }
 }

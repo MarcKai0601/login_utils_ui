@@ -1,9 +1,24 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '../store/auth'
 import { useI18n } from 'vue-i18n'
 import { LayoutDashboard, UserCircle, LogOut, ShieldCheck, Grid3x3, Globe } from 'lucide-vue-next'
+import { getFullVersion } from '../version'
+import { systemApi } from '../api'
+
+const backendVersion = ref('')
+
+onMounted(async () => {
+  try {
+    const res = await systemApi.getVersion()
+    if (res.data?.data?.version) {
+      backendVersion.value = res.data.data.version
+    }
+  } catch {
+    backendVersion.value = ''
+  }
+})
 
 const router = useRouter()
 const route = useRoute()
@@ -54,8 +69,13 @@ const navItems = computed(() => {
           <ShieldCheck class="w-4.5 h-4.5 text-white" :stroke-width="2" />
         </div>
         <div class="hidden sm:block">
-          <p class="text-sm font-bold leading-tight" style="color: var(--body-text)">Login Utils</p>
-          <p class="text-[10px] leading-tight" style="color: var(--sidebar-text)">Identity Provider</p>
+          <div class="flex items-center gap-1.5">
+            <p class="text-sm font-bold leading-tight" style="color: var(--body-text)">Login Utils</p>
+          </div>
+          <div class="flex items-center gap-1 mt-0.5">
+            <span class="px-1.5 py-0.5 rounded-md text-[9px] font-semibold tracking-wide" style="background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(52,211,153,0.1)); color: #34d399; border: 1px solid rgba(16,185,129,0.2);">FE {{ getFullVersion() }}</span>
+            <span v-if="backendVersion" class="px-1.5 py-0.5 rounded-md text-[9px] font-semibold tracking-wide" style="background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(129,140,248,0.1)); color: #818cf8; border: 1px solid rgba(99,102,241,0.2);">BE v{{ backendVersion }}</span>
+          </div>
         </div>
       </router-link>
 
