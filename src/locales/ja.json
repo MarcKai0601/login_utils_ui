@@ -12,14 +12,20 @@
         "errorGen": "予期せぬエラーが発生しました。もう一度お試しください。",
         "errorReq": "ユーザー名とパスワードを入力してください。",
         "username": "ユーザー名",
+        "usernameOrEmail": "ユーザー名またはメール",
         "password": "パスワード",
-        "usernamePlh": "ユーザー名を入力",
+        "usernamePlh": "ユーザー名またはメールを入力",
         "passwordPlh": "パスワードを入力",
+        "forgotPassword": "パスワードをお忘れですか？",
         "signin": "ログイン",
         "signingIn": "ログイン中…",
         "noAccount": "アカウントをお持ちではありませんか？",
-        "createAccount": "アカウント作成",
-        "securedBy": "{name} が保護 · アイデンティティプロバイダ"
+        "createAccount": "新規登録",
+        "securedBy": "Secured by {name} · Identity Provider",
+        "resetPasswordTitle": "パスワードのリセット",
+        "resetPasswordDesc": "登録したメールアドレスを入力してください。新しいパスワードを送信します。",
+        "sendNewPassword": "新しいパスワードを送信",
+        "resetSuccess": "新しいパスワードをメールで送信しました。後ほど再ログインしてください。"
     },
     "register": {
         "title": "アカウント作成",
@@ -31,17 +37,18 @@
         "usernameReq": "ユーザー名 *",
         "usernamePlh": "ユーザー名を選択",
         "passwordReq": "パスワード *",
-        "passwordPlh": "最低6文字",
-        "confirmReq": "パスワード確認 *",
+        "passwordPlh": "6文字以上",
+        "confirmReq": "パスワード（確認）*",
         "confirmPlh": "パスワードを再入力",
-        "optional": "オプション情報",
+        "emailReq": "メールアドレス *",
+        "optional": "オプション項目",
         "nickname": "ニックネーム",
         "nicknamePlh": "表示名",
         "email": "メールアドレス",
         "emailPlh": "you@example.com",
         "phone": "電話番号",
-        "phonePlh": "09xx-xxx-xxx",
-        "language": "言語の好み (任意)",
+        "phonePlh": "090-xxxx-xxxx",
+        "language": "優先言語",
         "createBtn": "アカウント作成",
         "creatingBtn": "作成中…",
         "hasAccount": "すでにアカウントをお持ちですか？",
@@ -53,7 +60,12 @@
         "noAppsTitle": "利用できるアプリがありません",
         "noAppsDesc": "システムへのアクセス権を割り当てるには、管理者に連絡してください。",
         "actionLaunch": "起動",
-        "actionOpen": "開く"
+        "unauthorizedBtn": "ホームに戻る"
+    },
+    "errors": {
+        "emailAlreadyExists": "このメールアドレスは既に登録されています。",
+        "userNotFound": "このメールアドレスに一致するアカウントが見つかりません。",
+        "pwdResetLimitExceeded": "パスワードのリセット回数が上限に達しました（30日間に最大3回まで）。しばらくしてから再試行するか、サポートにお問い合わせください。"
     },
     "apps": {
         "fas": {

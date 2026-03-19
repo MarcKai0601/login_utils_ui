@@ -7,5 +7,6 @@ export const APP_VERSION = '1.0.0'
 export const DESCRIPTION = 'App Store UX, i18n & Security Hardening'
 
 export function getFullVersion(): string {
+
     return `v${APP_VERSION}`
 }

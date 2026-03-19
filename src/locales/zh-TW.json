@@ -12,14 +12,20 @@
         "errorGen": "發生未預期的錯誤，請重試。",
         "errorReq": "請輸入帳號與密碼。",
         "username": "帳號",
+        "usernameOrEmail": "帳號或信箱",
         "password": "密碼",
-        "usernamePlh": "請輸入帳號",
+        "usernamePlh": "請輸入帳號或信箱",
         "passwordPlh": "請輸入密碼",
+        "forgotPassword": "忘記密碼？",
         "signin": "登入",
         "signingIn": "登入中…",
         "noAccount": "還沒有帳號？",
         "createAccount": "建立帳號",
-        "securedBy": "安全機制由 {name} 提供 · 身分提供者"
+        "securedBy": "安全機制由 {name} 提供 · 身分提供者",
+        "resetPasswordTitle": "重設密碼",
+        "resetPasswordDesc": "請輸入您註冊時使用的電子信箱，我們將發送一組新密碼給您。",
+        "sendNewPassword": "發送新密碼",
+        "resetSuccess": "新密碼已寄送至您的信箱，請查收後重新登入"
     },
     "register": {
         "title": "建立帳號",
@@ -34,10 +40,11 @@
         "passwordPlh": "最少 6 個字元",
         "confirmReq": "確認密碼 *",
         "confirmPlh": "再次輸入密碼",
+        "emailReq": "電子信箱 *",
         "optional": "選填資訊",
         "nickname": "暱稱",
         "nicknamePlh": "顯示名稱",
-        "email": "電子郵件",
+        "email": "電子信箱",
         "emailPlh": "you@example.com",
         "phone": "電話",
         "phonePlh": "09xx-xxx-xxx",
@@ -45,7 +52,13 @@
         "createBtn": "建立帳號",
         "creatingBtn": "建立中…",
         "hasAccount": "已經有帳號？",
-        "backLogin": "返回登入"
+        "backLogin": "返回登入",
+        "unauthorizedBtn": "返回首頁"
+    },
+    "errors": {
+        "emailAlreadyExists": "此信箱已被註冊",
+        "userNotFound": "找不到此信箱對應的帳號",
+        "pwdResetLimitExceeded": "密碼重設次數已達上限 (即 30 天內最多 3 次)，請稍後再試或聯繫客服"
     },
     "welcome": {
         "title": "應用程式啟動器",

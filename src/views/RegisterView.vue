@@ -27,8 +27,14 @@ async function handleRegister() {
   errorMessage.value = ''
   successMessage.value = ''
 
-  if (!username.value.trim() || !password.value.trim()) {
+  if (!username.value.trim() || !password.value.trim() || !email.value.trim()) {
     errorMessage.value = t('register.errorReq')
+    return
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!emailRegex.test(email.value)) {
+    errorMessage.value = t('register.errorEmailFormat', 'Invalid email format')
     return
   }
 
@@ -48,16 +54,20 @@ async function handleRegister() {
     const response = await authApi.register({
       username: username.value,
       password: password.value,
+      email: email.value,
       language: languagePref.value,
       nickname: nickname.value || undefined,
-      email: email.value || undefined,
       phone: phone.value || undefined,
     })
 
     const { code, message } = response.data
 
     if (String(code) !== '200' && String(code) !== '0' && String(code) !== '0000') {
-      errorMessage.value = message || 'Registration failed. Please try again.'
+      if (message && message.includes('EMAIL_ALREADY_EXISTS')) {
+        errorMessage.value = t('errors.emailAlreadyExists')
+      } else {
+        errorMessage.value = message || 'Registration failed. Please try again.'
+      }
       return
     }
 
@@ -157,6 +167,22 @@ async function handleRegister() {
             </div>
           </div>
 
+          <!-- Email -->
+          <div class="space-y-1.5">
+            <label for="reg-email" class="block text-xs font-medium" style="color: var(--sidebar-text)">{{ $t('register.emailReq', '信箱 (必填)') }}</label>
+            <div class="relative">
+              <Mail class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none" style="color: var(--sidebar-text)" :stroke-width="1.75" />
+              <input
+                id="reg-email"
+                v-model="email"
+                type="email"
+                :placeholder="$t('register.emailPlh')"
+                class="w-full pl-10 pr-4 py-2.5 rounded-lg text-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-violet-500/50"
+                style="background-color: var(--input-bg); border: 1px solid var(--input-border); color: var(--body-text)"
+              />
+            </div>
+          </div>
+
           <!-- Password -->
           <div class="space-y-1.5">
             <label for="reg-password" class="block text-xs font-medium" style="color: var(--sidebar-text)">{{ $t('register.passwordReq') }}</label>
@@ -245,22 +271,6 @@ async function handleRegister() {
                 v-model="nickname"
                 type="text"
                 :placeholder="$t('register.nicknamePlh')"
-                class="w-full pl-10 pr-4 py-2.5 rounded-lg text-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-violet-500/50"
-                style="background-color: var(--input-bg); border: 1px solid var(--input-border); color: var(--body-text)"
-              />
-            </div>
-          </div>
-
-          <!-- Email -->
-          <div class="space-y-1.5">
-            <label for="reg-email" class="block text-xs font-medium" style="color: var(--sidebar-text)">{{ $t('register.email') }}</label>
-            <div class="relative">
-              <Mail class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none" style="color: var(--sidebar-text)" :stroke-width="1.75" />
-              <input
-                id="reg-email"
-                v-model="email"
-                type="email"
-                :placeholder="$t('register.emailPlh')"
                 class="w-full pl-10 pr-4 py-2.5 rounded-lg text-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-violet-500/50"
                 style="background-color: var(--input-bg); border: 1px solid var(--input-border); color: var(--body-text)"
               />

@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { Lock, User, Eye, EyeOff, LogIn, ShieldCheck } from 'lucide-vue-next'
+import { Lock, User, Eye, EyeOff, LogIn, ShieldCheck, Mail, AlertCircle, ArrowRight } from 'lucide-vue-next'
 import { authApi } from '../api'
 import { useAuthStore } from '../store/auth'
 import { getFullVersion } from '../version'
@@ -22,6 +22,67 @@ const showPassword = ref(false)
 const isLoading = ref(false)
 const errorMessage = ref('')
 const redirectUrl = ref('')
+
+// ─── Forgot Password State ────────────────────────────────────
+const showForgotModal = ref(false)
+const resetEmail = ref('')
+const isResetting = ref(false)
+const resetError = ref('')
+const resetSuccess = ref('')
+
+function closeForgotModal() {
+  showForgotModal.value = false
+  resetEmail.value = ''
+  resetError.value = ''
+  resetSuccess.value = ''
+}
+
+async function handleForgotPassword() {
+  resetError.value = ''
+  resetSuccess.value = ''
+
+  if (!resetEmail.value.trim()) {
+    resetError.value = t('register.errorReq', 'Email is required')
+    return
+  }
+  
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!emailRegex.test(resetEmail.value)) {
+    resetError.value = t('register.errorEmailFormat', 'Invalid email format')
+    return
+  }
+
+  isResetting.value = true
+
+  try {
+    const response = await authApi.forgotPassword({ email: resetEmail.value })
+    const { code, message } = response.data
+
+    if (String(code) === '200' || String(code) === '0' || String(code) === '0000') {
+      resetSuccess.value = t('login.resetSuccess')
+      setTimeout(() => closeForgotModal(), 3000)
+    } else {
+      if (message && message.includes('PWD_RESET_LIMIT_EXCEEDED')) {
+        resetError.value = t('errors.pwdResetLimitExceeded')
+      } else if (message && message.includes('USER_NOT_FOUND')) {
+        resetError.value = t('errors.userNotFound')
+      } else {
+        resetError.value = message || t('login.errorGen')
+      }
+    }
+  } catch (err: any) {
+    const msg = err.response?.data?.message || ''
+    if (msg.includes('PWD_RESET_LIMIT_EXCEEDED')) {
+      resetError.value = t('errors.pwdResetLimitExceeded')
+    } else if (msg.includes('USER_NOT_FOUND')) {
+      resetError.value = t('errors.userNotFound')
+    } else {
+      resetError.value = msg || t('login.errorGen')
+    }
+  } finally {
+    isResetting.value = false
+  }
+}
 
 // ─── Read redirect param on mount ─────────────────────────────
 onMounted(() => {
@@ -133,9 +194,9 @@ async function handleLogin() {
         <!-- Form -->
         <form @submit.prevent="handleLogin" class="space-y-5" id="login-form">
 
-          <!-- Username -->
+          <!-- Username or Email -->
           <div class="space-y-1.5">
-            <label for="username" class="block text-xs font-medium" style="color: var(--sidebar-text)">{{ $t('login.username') }}</label>
+            <label for="username" class="block text-xs font-medium" style="color: var(--sidebar-text)">{{ $t('login.usernameOrEmail') }}</label>
             <div class="relative">
               <User class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none" style="color: var(--sidebar-text)" :stroke-width="1.75" />
               <input
@@ -152,7 +213,12 @@ async function handleLogin() {
 
           <!-- Password -->
           <div class="space-y-1.5">
-            <label for="password" class="block text-xs font-medium" style="color: var(--sidebar-text)">{{ $t('login.password') }}</label>
+            <div class="flex justify-between items-center mb-1.5">
+              <label for="password" class="block text-xs font-medium" style="color: var(--sidebar-text)">{{ $t('login.password') }}</label>
+              <button type="button" @click="showForgotModal = true" tabindex="-1" class="text-xs font-medium hover:underline focus:outline-none" style="color: #10b981;">
+                {{ $t('login.forgotPassword') }}
+              </button>
+            </div>
             <div class="relative">
               <Lock class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none" style="color: var(--sidebar-text)" :stroke-width="1.75" />
               <input
@@ -210,5 +276,93 @@ async function handleLogin() {
         </div>
       </div>
     </div>
+
+    <!-- ─── Forgot Password Modal ──────────────────────────────── -->
+    <Teleport to="body">
+      <Transition
+        enter-active-class="transition duration-200 ease-out"
+        enter-from-class="opacity-0"
+        enter-to-class="opacity-100"
+        leave-active-class="transition duration-150 ease-in"
+        leave-from-class="opacity-100"
+        leave-to-class="opacity-0"
+      >
+        <div v-if="showForgotModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6" style="background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px);">
+          
+          <div 
+            class="w-full max-w-sm rounded-xl overflow-hidden shadow-2xl transition-all"
+            style="background-color: var(--card-bg); border: 1px solid var(--card-border)"
+          >
+            <!-- Header -->
+            <div class="px-6 py-5 border-b" style="border-color: var(--card-border)">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center shrink-0">
+                  <Mail class="w-5 h-5 text-emerald-500" />
+                </div>
+                <div>
+                  <h3 class="text-base font-semibold" style="color: var(--body-text)">{{ $t('login.resetPasswordTitle') }}</h3>
+                  <p class="text-xs mt-0.5" style="color: var(--sidebar-text)">{{ $t('login.resetPasswordDesc') }}</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Body (Form) -->
+            <form @submit.prevent="handleForgotPassword" class="p-6 space-y-4">
+              
+              <!-- Alerts -->
+              <div v-if="resetError" class="p-3 rounded-lg text-xs flex items-start gap-2 text-red-500 bg-red-500/10 border border-red-500/20">
+                <AlertCircle class="w-4 h-4 shrink-0 mt-0.5" />
+                <span>{{ resetError }}</span>
+              </div>
+              <div v-if="resetSuccess" class="p-3 rounded-lg text-xs flex items-center gap-2 text-emerald-500 bg-emerald-500/10 border border-emerald-500/20">
+                <ShieldCheck class="w-4 h-4 shrink-0" />
+                <span>{{ resetSuccess }}</span>
+              </div>
+
+              <!-- Email Field -->
+              <div class="space-y-1.5">
+                <label class="block text-xs font-medium" style="color: var(--sidebar-text)">{{ $t('register.email') }}</label>
+                <div class="relative">
+                  <Mail class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none" style="color: var(--sidebar-text)" />
+                  <input
+                    v-model="resetEmail"
+                    type="email"
+                    :placeholder="$t('register.emailPlh')"
+                    class="w-full pl-9 pr-3 py-2 rounded-lg text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                    style="background-color: var(--input-bg); border: 1px solid var(--input-border); color: var(--body-text)"
+                  />
+                </div>
+              </div>
+
+              <!-- Actions -->
+              <div class="flex gap-3 pt-4 border-t mt-6" style="border-color: var(--card-border)">
+                <button
+                  type="button"
+                  @click="closeForgotModal"
+                  class="flex-1 px-4 py-2 text-sm font-medium rounded-lg transition-colors border"
+                  style="color: var(--body-text); border-color: var(--input-border); background-color: var(--input-bg)"
+                  :disabled="isResetting"
+                >
+                  {{ $t('profile.password.cancelBtn') }}
+                </button>
+                <button
+                  type="submit"
+                  class="flex-1 px-4 py-2 text-sm font-medium rounded-lg transition-colors bg-emerald-600 hover:bg-emerald-700 text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"
+                  :disabled="isResetting || !!resetSuccess"
+                >
+                  <svg v-if="isResetting" class="animate-spin -ml-1 h-4 w-4" viewBox="0 0 24 24" fill="none">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                  </svg>
+                  <ArrowRight v-else class="w-4 h-4" />
+                  {{ isResetting ? $t('profile.password.savingBtn') : $t('login.sendNewPassword') }}
+                </button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>

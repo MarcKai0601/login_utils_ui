@@ -50,10 +50,10 @@ export interface LoginResponseData {
 export interface RegisterRequestData {
     username: string
     password: string
+    email: string
     status?: number
     roleId?: number
     nickname?: string
-    email?: string
     phone?: string
     memo?: string
     language?: string
@@ -83,7 +83,11 @@ export const authApi = {
     },
 
     updatePassword(data: { oldPassword: string; newPassword: string }) {
-        return apiClient.post<MgrResponse<null>>('/api/mgr/user/update-password', data)
+        return apiClient.put<MgrResponse<null>>('/api/mgr/user/update-password', data)
+    },
+
+    forgotPassword(data: { email: string }) {
+        return apiClient.post<MgrResponse<null>>('/api/v1/auth/forgot-password', data)
     },
 }
 
