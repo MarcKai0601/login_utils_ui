@@ -55,7 +55,13 @@ router.beforeEach((to, _from, next) => {
         return
     }
 
-    // 2. 需要 SUPER_ADMIN 但角色不符 → 導向 Welcome
+    // 2. OTP 一次性密碼：強制導向 Profile 修改密碼（僅允許 Profile 頁面）
+    if (authStore.token && authStore.isTempPassword && to.name !== 'Profile' && to.name !== 'Login') {
+        next({ name: 'Profile' })
+        return
+    }
+
+    // 3. 需要 SUPER_ADMIN 但角色不符 → 導向 Welcome
     if (to.meta.requiresSuperAdmin && !authStore.isSuperAdmin) {
         next({ name: 'Welcome' })
         return

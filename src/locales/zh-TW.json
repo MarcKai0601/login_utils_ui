@@ -96,6 +96,8 @@
         "primaryRole": "主要角色",
         "noRole": "尚未指派角色",
         "contactAdmin": "請聯絡管理員以指派系統角色",
+        "otpWarningTitle": "⚠ 偵測到一次性密碼",
+        "otpWarningDesc": "您目前使用的是系統產生的臨時密碼，為保障帳號安全，請立即修改密碼後才能繼續使用系統。",
         "password": {
             "changeBtn": "修改密碼",
             "modalTitle": "修改密碼",

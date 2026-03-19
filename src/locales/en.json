@@ -94,6 +94,8 @@
         "primaryRole": "Primary Role",
         "noRole": "No role assigned yet",
         "contactAdmin": "Contact administrator to assign a role",
+        "otpWarningTitle": "⚠ Temporary Password Detected",
+        "otpWarningDesc": "You are currently using a system-generated one-time password. For your account security, please change your password immediately before continuing.",
         "password": {
             "changeBtn": "Change Password",
             "modalTitle": "Change Password",

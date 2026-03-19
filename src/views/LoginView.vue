@@ -114,22 +114,31 @@ async function handleLogin() {
 
     // Store credentials in Pinia + localStorage
     const primaryRole = data.role || 'USER'
-    authStore.login(data.token, data.userId, data.username || username.value, primaryRole, data.roles || [], data.language || '')
+    authStore.login(data.token, data.userId, data.username || username.value, primaryRole, data.roles || [], data.language || '', data.isTempPassword || 0)
     
     // Apply user preferred language globally
     if (data.language) {
       locale.value = data.language
     }
 
-    // SSO redirect logic
-    if (redirectUrl.value) {
-      // 跨域或跨專案跳轉，使用原生 window.location.href 並結合 URL 解構
-      const targetUrl = new URL(redirectUrl.value, window.location.origin)
-      targetUrl.searchParams.set('token', data.token)
-      window.location.href = targetUrl.toString()
+    // OTP 一次性密碼檢查：如果是臨時密碼，強制導向 Profile 修改密碼
+    if (authStore.isTempPassword) {
+      // 如果有 SSO redirect，先暫存，等改完密碼再跳轉
+      if (redirectUrl.value) {
+        localStorage.setItem('pending_sso_redirect', redirectUrl.value)
+      }
+      router.push({ name: 'Profile' })
     } else {
-      // No external redirect → go to App Launcher
-      router.push({ name: 'Welcome' })
+      // SSO redirect logic
+      if (redirectUrl.value) {
+        // 跨域或跨專案跳轉，使用原生 window.location.href 並結合 URL 解構
+        const targetUrl = new URL(redirectUrl.value, window.location.origin)
+        targetUrl.searchParams.set('token', data.token)
+        window.location.href = targetUrl.toString()
+      } else {
+        // No external redirect → go to App Launcher
+        router.push({ name: 'Welcome' })
+      }
     }
   } catch (err: any) {
     if (err.response?.data?.message) {

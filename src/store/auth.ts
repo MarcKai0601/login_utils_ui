@@ -15,18 +15,20 @@ export const useAuthStore = defineStore('auth', () => {
     const role = ref<string>(localStorage.getItem('role') || '')
     const roles = ref<RoleInfo[]>(JSON.parse(localStorage.getItem('roles') || '[]'))
     const language = ref<string>(localStorage.getItem('language') || '')
+    const isTempPassword = ref<boolean>(localStorage.getItem('isTempPassword') === 'true')
 
     // --------------- Getters ---------------
     const isAuthenticated = computed(() => !!token.value)
     const isSuperAdmin = computed(() => role.value === 'SUPER_ADMIN')
 
     // --------------- Actions ---------------
-    function login(newToken: string, newUserId: string | number, newUsername: string = '', newRole: string = 'USER', newRoles: RoleInfo[] = [], newLanguage: string = '') {
+    function login(newToken: string, newUserId: string | number, newUsername: string = '', newRole: string = 'USER', newRoles: RoleInfo[] = [], newLanguage: string = '', newIsTempPassword: boolean | number = false) {
         token.value = newToken
         userId.value = String(newUserId)
         username.value = newUsername
         role.value = newRole
         roles.value = newRoles
+        isTempPassword.value = Boolean(newIsTempPassword)
         if (newLanguage) language.value = newLanguage
 
         localStorage.setItem('token', newToken)
@@ -34,6 +36,7 @@ export const useAuthStore = defineStore('auth', () => {
         localStorage.setItem('username', newUsername)
         localStorage.setItem('role', newRole)
         localStorage.setItem('roles', JSON.stringify(newRoles))
+        localStorage.setItem('isTempPassword', String(isTempPassword.value))
         if (newLanguage) localStorage.setItem('language', newLanguage)
     }
 
@@ -44,6 +47,7 @@ export const useAuthStore = defineStore('auth', () => {
         role.value = ''
         roles.value = []
         language.value = ''
+        isTempPassword.value = false
 
         localStorage.removeItem('token')
         localStorage.removeItem('userId')
@@ -51,6 +55,8 @@ export const useAuthStore = defineStore('auth', () => {
         localStorage.removeItem('role')
         localStorage.removeItem('roles')
         localStorage.removeItem('language')
+        localStorage.removeItem('isTempPassword')
+        localStorage.removeItem('pending_sso_redirect')
     }
 
     return {
@@ -60,6 +66,7 @@ export const useAuthStore = defineStore('auth', () => {
         role,
         roles,
         language,
+        isTempPassword,
         isAuthenticated,
         isSuperAdmin,
         login,

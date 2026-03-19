@@ -45,6 +45,7 @@ export interface LoginResponseData {
     role: string
     roles: RoleInfo[]
     language?: string
+    isTempPassword?: number
 }
 
 export interface RegisterRequestData {

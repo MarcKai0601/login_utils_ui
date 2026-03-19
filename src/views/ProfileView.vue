@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../store/auth'
 import { authApi } from '../api'
-import { User, ShieldCheck, Fingerprint, BadgeCheck, KeyRound, Eye, EyeOff, Lock, AlertCircle } from 'lucide-vue-next'
+import { useI18n } from 'vue-i18n'
+import { User, ShieldCheck, Fingerprint, BadgeCheck, KeyRound, Eye, EyeOff, Lock, AlertCircle, AlertTriangle } from 'lucide-vue-next'
 
 const authStore = useAuthStore()
 const router = useRouter()
+const { t } = useI18n()
 
 // ─── Modal State ──────────────────────────────────────────────
 const showPasswordModal = ref(false)
@@ -22,6 +24,8 @@ const successMessage = ref('')
 
 // ─── Reset State ──────────────────────────────────────────────
 function closePasswordModal() {
+  // OTP 模式下不允許關閉 Modal
+  if (authStore.isTempPassword) return
   showPasswordModal.value = false
   oldPassword.value = ''
   newPassword.value = ''
@@ -32,6 +36,13 @@ function closePasswordModal() {
   showNewPwd.value = false
   showConfirmPwd.value = false
 }
+
+// ─── Auto-open modal for OTP users ────────────────────────────
+onMounted(() => {
+  if (authStore.isTempPassword) {
+    showPasswordModal.value = true
+  }
+})
 
 // ─── Submit Handler ───────────────────────────────────────────
 async function handleChangePassword() {
@@ -59,12 +70,26 @@ async function handleChangePassword() {
     })
     
     if (String(res.data.code) === '200' || String(res.data.code) === '0' || String(res.data.code) === '0000') {
-      successMessage.value = 'Password changed successfully'
+      // 解除 OTP 一次性密碼狀態
+      authStore.isTempPassword = false
+      localStorage.setItem('isTempPassword', 'false')
+
+      successMessage.value = t('profile.password.successMsg')
       setTimeout(() => {
-        closePasswordModal()
-        authStore.logout()
-        router.push('/login')
-        setTimeout(() => alert('Password changed successfully. Please login again.'), 100)
+        showPasswordModal.value = false
+        
+        // 檢查是否有暫存的 SSO redirect
+        const pendingRedirect = localStorage.getItem('pending_sso_redirect')
+        if (pendingRedirect) {
+          localStorage.removeItem('pending_sso_redirect')
+          const targetUrl = new URL(pendingRedirect, window.location.origin)
+          targetUrl.searchParams.set('token', authStore.token)
+          window.location.href = targetUrl.toString()
+        } else {
+          authStore.logout()
+          router.push('/login')
+          setTimeout(() => alert(t('profile.password.successMsg')), 100)
+        }
       }, 1000)
     } else {
       errorMessage.value = res.data.message || 'Failed to update password'
@@ -79,6 +104,15 @@ async function handleChangePassword() {
 
 <template>
   <div class="flex-1 p-6 md:p-10 overflow-auto" style="background-color: var(--body-bg)">
+
+    <!-- OTP Warning Banner -->
+    <div v-if="authStore.isTempPassword" class="mb-6 p-4 rounded-xl flex items-start gap-3" style="background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(251,191,36,0.08)); border: 1px solid rgba(245,158,11,0.3);">
+      <AlertTriangle class="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+      <div>
+        <p class="text-sm font-semibold text-amber-400">{{ $t('profile.otpWarningTitle') }}</p>
+        <p class="text-xs mt-0.5" style="color: var(--sidebar-text)">{{ $t('profile.otpWarningDesc') }}</p>
+      </div>
+    </div>
 
     <div class="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
