@@ -58,6 +58,7 @@ export interface RegisterRequestData {
     phone?: string
     memo?: string
     language?: string
+    systemId: number // <--- 【修復錯誤 2】新增 systemId 屬性定義
 }
 
 export interface MgrResponse<T = unknown> {
@@ -68,10 +69,12 @@ export interface MgrResponse<T = unknown> {
 
 // ─── Auth API ─────────────────────────────────────────────────
 export const authApi = {
-    login(username: string, password: string) {
+    // 【修復錯誤 1】將函式簽章加上 systemId: number，並加到 post payload 中
+    login(username: string, password: string, systemId: number) {
         return apiClient.post<MgrResponse<LoginResponseData>>('/api/login', {
             username,
             password,
+            systemId // <--- 把 systemId 一併打包丟給後端
         })
     },
 
@@ -79,7 +82,7 @@ export const authApi = {
         return apiClient.post<MgrResponse<string>>('/api/mgr/user/add', {
             ...data,
             status: data.status ?? 1,
-            roleId: data.roleId ?? 1,
+            // 註冊時也可以考慮把寫死的 roleId 拿掉，因為我們現在後端已經會依據 systemId 自動賦予對應的預設角色了
         })
     },
 
