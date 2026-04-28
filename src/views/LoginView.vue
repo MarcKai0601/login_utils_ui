@@ -23,6 +23,9 @@ const isLoading = ref(false)
 const errorMessage = ref('')
 const redirectUrl = ref('')
 
+// 取得環境變數中的 System ID (預設為 1)
+const systemId = Number(import.meta.env.VITE_APP_SYSTEM_ID) || 1
+
 // ─── Forgot Password State ────────────────────────────────────
 const showForgotModal = ref(false)
 const resetEmail = ref('')
@@ -45,7 +48,7 @@ async function handleForgotPassword() {
     resetError.value = t('register.errorReq', 'Email is required')
     return
   }
-  
+
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   if (!emailRegex.test(resetEmail.value)) {
     resetError.value = t('register.errorEmailFormat', 'Invalid email format')
@@ -104,7 +107,9 @@ async function handleLogin() {
   isLoading.value = true
 
   try {
-    const response = await authApi.login(username.value, password.value)
+    // 【修改點】將 systemId 一起傳給登入 API
+    const response = await authApi.login(username.value, password.value, systemId)
+
     const { code, message, data } = response.data
 
     if (String(code) !== '200' && String(code) !== '0' && String(code) !== '0000') {
@@ -115,7 +120,7 @@ async function handleLogin() {
     // Store credentials in Pinia + localStorage
     const primaryRole = data.role || 'USER'
     authStore.login(data.token, data.userId, data.username || username.value, primaryRole, data.roles || [], data.language || '', data.isTempPassword || 0)
-    
+
     // Apply user preferred language globally
     if (data.language) {
       locale.value = data.language
@@ -157,14 +162,12 @@ async function handleLogin() {
 <template>
   <div class="min-h-screen flex items-center justify-center px-4" style="background-color: var(--body-bg)">
 
-    <!-- Login Card -->
     <div class="w-full max-w-md">
       <div
-        class="rounded-xl p-8 sm:p-10 transition-colors duration-200"
-        style="background-color: var(--card-bg); border: 1px solid var(--card-border)"
+          class="rounded-xl p-8 sm:p-10 transition-colors duration-200"
+          style="background-color: var(--card-bg); border: 1px solid var(--card-border)"
       >
 
-        <!-- Header / Branding -->
         <div class="text-center mb-8">
           <div class="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-emerald-500 shrink-0 mb-4">
             <ShieldCheck class="w-6 h-6 text-white" :stroke-width="1.75" />
@@ -172,55 +175,51 @@ async function handleLogin() {
           <h1 class="text-xl font-bold leading-tight" style="color: var(--body-text)">{{ $t('login.title') }}</h1>
           <p class="text-xs mt-1" style="color: var(--sidebar-text)">{{ $t('login.subtitle') }}</p>
           <div
-            v-if="redirectUrl"
-            class="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs transition-colors"
-            style="background-color: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2)"
+              v-if="redirectUrl"
+              class="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs transition-colors"
+              style="background-color: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2)"
           >
             <LogIn class="w-3.5 h-3.5 text-emerald-400" />
             <span class="text-emerald-400 truncate max-w-[240px]">{{ $t('login.redirect', { url: redirectUrl }) }}</span>
           </div>
         </div>
 
-        <!-- Error Message -->
         <Transition
-          enter-active-class="transition duration-200 ease-out"
-          enter-from-class="opacity-0 -translate-y-2"
-          enter-to-class="opacity-100 translate-y-0"
-          leave-active-class="transition duration-150 ease-in"
-          leave-from-class="opacity-100 translate-y-0"
-          leave-to-class="opacity-0 -translate-y-2"
+            enter-active-class="transition duration-200 ease-out"
+            enter-from-class="opacity-0 -translate-y-2"
+            enter-to-class="opacity-100 translate-y-0"
+            leave-active-class="transition duration-150 ease-in"
+            leave-from-class="opacity-100 translate-y-0"
+            leave-to-class="opacity-0 -translate-y-2"
         >
           <div
-            v-if="errorMessage"
-            class="mb-5 p-3 rounded-lg text-sm flex items-start gap-2"
-            style="background-color: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #f87171"
+              v-if="errorMessage"
+              class="mb-5 p-3 rounded-lg text-sm flex items-start gap-2"
+              style="background-color: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #f87171"
           >
             <span class="shrink-0 mt-0.5">⚠</span>
             <span>{{ errorMessage }}</span>
           </div>
         </Transition>
 
-        <!-- Form -->
         <form @submit.prevent="handleLogin" class="space-y-5" id="login-form">
 
-          <!-- Username or Email -->
           <div class="space-y-1.5">
             <label for="username" class="block text-xs font-medium" style="color: var(--sidebar-text)">{{ $t('login.usernameOrEmail') }}</label>
             <div class="relative">
               <User class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none" style="color: var(--sidebar-text)" :stroke-width="1.75" />
               <input
-                id="username"
-                v-model="username"
-                type="text"
-                autocomplete="username"
-                :placeholder="$t('login.usernamePlh')"
-                class="w-full pl-10 pr-4 py-2.5 rounded-lg text-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
-                style="background-color: var(--input-bg); border: 1px solid var(--input-border); color: var(--body-text)"
+                  id="username"
+                  v-model="username"
+                  type="text"
+                  autocomplete="username"
+                  :placeholder="$t('login.usernamePlh')"
+                  class="w-full pl-10 pr-4 py-2.5 rounded-lg text-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                  style="background-color: var(--input-bg); border: 1px solid var(--input-border); color: var(--body-text)"
               />
             </div>
           </div>
 
-          <!-- Password -->
           <div class="space-y-1.5">
             <div class="flex justify-between items-center mb-1.5">
               <label for="password" class="block text-xs font-medium" style="color: var(--sidebar-text)">{{ $t('login.password') }}</label>
@@ -231,20 +230,20 @@ async function handleLogin() {
             <div class="relative">
               <Lock class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none" style="color: var(--sidebar-text)" :stroke-width="1.75" />
               <input
-                id="password"
-                v-model="password"
-                :type="showPassword ? 'text' : 'password'"
-                autocomplete="current-password"
-                :placeholder="$t('login.passwordPlh')"
-                class="w-full pl-10 pr-10 py-2.5 rounded-lg text-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
-                style="background-color: var(--input-bg); border: 1px solid var(--input-border); color: var(--body-text)"
+                  id="password"
+                  v-model="password"
+                  :type="showPassword ? 'text' : 'password'"
+                  autocomplete="current-password"
+                  :placeholder="$t('login.passwordPlh')"
+                  class="w-full pl-10 pr-10 py-2.5 rounded-lg text-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                  style="background-color: var(--input-bg); border: 1px solid var(--input-border); color: var(--body-text)"
               />
               <button
-                type="button"
-                @click="showPassword = !showPassword"
-                class="absolute right-3.5 top-1/2 -translate-y-1/2 transition-colors duration-150 cursor-pointer"
-                style="color: var(--sidebar-text)"
-                tabindex="-1"
+                  type="button"
+                  @click="showPassword = !showPassword"
+                  class="absolute right-3.5 top-1/2 -translate-y-1/2 transition-colors duration-150 cursor-pointer"
+                  style="color: var(--sidebar-text)"
+                  tabindex="-1"
               >
                 <Eye v-if="!showPassword" class="w-4 h-4" :stroke-width="1.75" />
                 <EyeOff v-else class="w-4 h-4" :stroke-width="1.75" />
@@ -252,12 +251,11 @@ async function handleLogin() {
             </div>
           </div>
 
-          <!-- Submit Button -->
           <button
-            id="login-button"
-            type="submit"
-            :disabled="isLoading"
-            class="w-full py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 disabled:opacity-60 disabled:cursor-not-allowed transition-colors duration-200 flex items-center justify-center gap-2 cursor-pointer"
+              id="login-button"
+              type="submit"
+              :disabled="isLoading"
+              class="w-full py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 disabled:opacity-60 disabled:cursor-not-allowed transition-colors duration-200 flex items-center justify-center gap-2 cursor-pointer"
           >
             <svg v-if="isLoading" class="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
@@ -268,14 +266,13 @@ async function handleLogin() {
           </button>
         </form>
 
-        <!-- Footer -->
         <div class="mt-8 pt-5 text-center space-y-2" style="border-top: 1px solid var(--card-border)">
           <p class="text-xs" style="color: var(--sidebar-text)">
             {{ $t('login.noAccount') }}
             <router-link
-              :to="{ name: 'Register' }"
-              class="font-medium transition-colors hover:underline"
-              style="color: var(--body-text)"
+                :to="{ name: 'Register' }"
+                class="font-medium transition-colors hover:underline"
+                style="color: var(--body-text)"
             >
               {{ $t('login.createAccount') }}
             </router-link>
@@ -286,23 +283,21 @@ async function handleLogin() {
       </div>
     </div>
 
-    <!-- ─── Forgot Password Modal ──────────────────────────────── -->
     <Teleport to="body">
       <Transition
-        enter-active-class="transition duration-200 ease-out"
-        enter-from-class="opacity-0"
-        enter-to-class="opacity-100"
-        leave-active-class="transition duration-150 ease-in"
-        leave-from-class="opacity-100"
-        leave-to-class="opacity-0"
+          enter-active-class="transition duration-200 ease-out"
+          enter-from-class="opacity-0"
+          enter-to-class="opacity-100"
+          leave-active-class="transition duration-150 ease-in"
+          leave-from-class="opacity-100"
+          leave-to-class="opacity-0"
       >
         <div v-if="showForgotModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6" style="background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px);">
-          
-          <div 
-            class="w-full max-w-sm rounded-xl overflow-hidden shadow-2xl transition-all"
-            style="background-color: var(--card-bg); border: 1px solid var(--card-border)"
+
+          <div
+              class="w-full max-w-sm rounded-xl overflow-hidden shadow-2xl transition-all"
+              style="background-color: var(--card-bg); border: 1px solid var(--card-border)"
           >
-            <!-- Header -->
             <div class="px-6 py-5 border-b" style="border-color: var(--card-border)">
               <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center shrink-0">
@@ -315,10 +310,8 @@ async function handleLogin() {
               </div>
             </div>
 
-            <!-- Body (Form) -->
             <form @submit.prevent="handleForgotPassword" class="p-6 space-y-4">
-              
-              <!-- Alerts -->
+
               <div v-if="resetError" class="p-3 rounded-lg text-xs flex items-start gap-2 text-red-500 bg-red-500/10 border border-red-500/20">
                 <AlertCircle class="w-4 h-4 shrink-0 mt-0.5" />
                 <span>{{ resetError }}</span>
@@ -328,36 +321,34 @@ async function handleLogin() {
                 <span>{{ resetSuccess }}</span>
               </div>
 
-              <!-- Email Field -->
               <div class="space-y-1.5">
                 <label class="block text-xs font-medium" style="color: var(--sidebar-text)">{{ $t('register.email') }}</label>
                 <div class="relative">
                   <Mail class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none" style="color: var(--sidebar-text)" />
                   <input
-                    v-model="resetEmail"
-                    type="email"
-                    :placeholder="$t('register.emailPlh')"
-                    class="w-full pl-9 pr-3 py-2 rounded-lg text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
-                    style="background-color: var(--input-bg); border: 1px solid var(--input-border); color: var(--body-text)"
+                      v-model="resetEmail"
+                      type="email"
+                      :placeholder="$t('register.emailPlh')"
+                      class="w-full pl-9 pr-3 py-2 rounded-lg text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                      style="background-color: var(--input-bg); border: 1px solid var(--input-border); color: var(--body-text)"
                   />
                 </div>
               </div>
 
-              <!-- Actions -->
               <div class="flex gap-3 pt-4 border-t mt-6" style="border-color: var(--card-border)">
                 <button
-                  type="button"
-                  @click="closeForgotModal"
-                  class="flex-1 px-4 py-2 text-sm font-medium rounded-lg transition-colors border"
-                  style="color: var(--body-text); border-color: var(--input-border); background-color: var(--input-bg)"
-                  :disabled="isResetting"
+                    type="button"
+                    @click="closeForgotModal"
+                    class="flex-1 px-4 py-2 text-sm font-medium rounded-lg transition-colors border"
+                    style="color: var(--body-text); border-color: var(--input-border); background-color: var(--input-bg)"
+                    :disabled="isResetting"
                 >
                   {{ $t('profile.password.cancelBtn') }}
                 </button>
                 <button
-                  type="submit"
-                  class="flex-1 px-4 py-2 text-sm font-medium rounded-lg transition-colors bg-emerald-600 hover:bg-emerald-700 text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"
-                  :disabled="isResetting || !!resetSuccess"
+                    type="submit"
+                    class="flex-1 px-4 py-2 text-sm font-medium rounded-lg transition-colors bg-emerald-600 hover:bg-emerald-700 text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"
+                    :disabled="isResetting || !!resetSuccess"
                 >
                   <svg v-if="isResetting" class="animate-spin -ml-1 h-4 w-4" viewBox="0 0 24 24" fill="none">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
