@@ -45,7 +45,7 @@
         "nickname": "暱稱",
         "nicknamePlh": "顯示名稱",
         "email": "電子信箱",
-        "emailPlh": "you@example.com",
+        "emailPlh": "you{'@'}example.com",
         "phone": "電話",
         "phonePlh": "09xx-xxx-xxx",
         "language": "語言偏好 (選填)",

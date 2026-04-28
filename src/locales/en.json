@@ -44,7 +44,7 @@
         "nickname": "Display Name",
         "nicknamePlh": "Your display name",
         "email": "Email Address",
-        "emailPlh": "you@example.com",
+        "emailPlh": "you{'@'}example.com",
         "phone": "Phone Number",
         "phonePlh": "(555) 123-4567",
         "language": "Preferred Language",

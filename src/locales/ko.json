@@ -45,7 +45,7 @@
         "nickname": "닉네임",
         "nicknamePlh": "표시 이름",
         "email": "이메일",
-        "emailPlh": "you@example.com",
+        "emailPlh": "you{'@'}example.com",
         "phone": "전화번호",
         "phonePlh": "010-xxxx-xxxx",
         "language": "선호 언어",
