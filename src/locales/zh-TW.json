@@ -35,7 +35,7 @@
         "errorLen": "密碼至少需要 6 個字元。",
         "errorMatch": "密碼與確認密碼不符。",
         "usernameReq": "帳號 *",
-        "usernamePlh": "選擇一個帳號",
+        "usernamePlh": "帳號",
         "passwordReq": "密碼 *",
         "passwordPlh": "最少 6 個字元",
         "confirmReq": "確認密碼 *",
