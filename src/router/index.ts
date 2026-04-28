@@ -31,7 +31,9 @@ const router = createRouter({
             path: '/',
             name: 'Dashboard',
             component: AdminDashboardView,
-            meta: { requiresAuth: true, requiresSuperAdmin: true },
+            // 【修改點 1】：改用 allowedRoles 陣列宣告權限。
+            // 這裡設定只有 SUPER_ADMIN 和 ADMIN 可以進入 Dashboard
+            meta: { requiresAuth: true, allowedRoles: ['SUPER_ADMIN', 'ADMIN'] },
         },
         {
             path: '/profile',
@@ -61,10 +63,16 @@ router.beforeEach((to, _from, next) => {
         return
     }
 
-    // 3. 需要 SUPER_ADMIN 但角色不符 → 導向 Welcome
-    if (to.meta.requiresSuperAdmin && !authStore.isSuperAdmin) {
-        next({ name: 'Welcome' })
-        return
+    // 3. 【修改點 2】：RBAC 動態角色驗證
+    // 如果該路由有設定 allowedRoles，就檢查使用者的角色是否有在允許名單內
+    if (to.meta.allowedRoles) {
+        const allowedRoles = to.meta.allowedRoles as string[]
+        // 假設你的 authStore.role 存放的是目前登入系統的 RoleCode (如 'USER', 'ADMIN')
+        if (!allowedRoles.includes(authStore.role)) {
+            // 角色不符，踢回 Welcome 頁面
+            next({ name: 'Welcome' })
+            return
+        }
     }
 
     next()
